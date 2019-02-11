@@ -15,6 +15,7 @@ class FrontendEnvironmentListBuilder extends ConfigEntityListBuilder {
    */
   public function buildHeader() {
     $header['label'] = $this->t('Frontend environment');
+    $header['plugin'] = $this->t('Type');
     $header['id'] = $this->t('Machine name');
     return $header + parent::buildHeader();
   }
@@ -23,9 +24,10 @@ class FrontendEnvironmentListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
+    /** @var  \Drupal\build_hooks\Entity\FrontendEnvironment $entity */
     $row['label'] = $entity->label();
+    $row['plugin'] = $entity->getPlugin()->getPluginDefinition()['label'];
     $row['id'] = $entity->id();
-    // You probably want a few more properties here...
     return $row + parent::buildRow($entity);
   }
 
