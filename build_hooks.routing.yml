@@ -28,11 +28,11 @@ build_hooks.deployment_form:
         type: entity:frontend_environment
   requirements:
     _permission: 'deploy to endpoints'
-build_hooks.admin_display_theme:
-  path: '/admin/structure/fronts'
+build_hooks.frontend_environment_plugin_types:
+  path: '/admin/structure/frontend_environment_plugin_types'
   defaults:
     _controller: '\Drupal\build_hooks\Controller\FrontendEnvironmentLibraryController::listFrontendEnvironments'
-    _title: 'Block layout'
+    _title: 'Frontend environment types'
   requirements:
     _permission: 'access administration pages'
   options:

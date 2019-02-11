@@ -12,7 +12,7 @@ use Drupal\Core\Plugin\DefaultSingleLazyPluginCollection;
 class FrontendEnvironmentPluginCollection extends DefaultSingleLazyPluginCollection {
 
   /**
-   * The block ID this plugin collection belongs to.
+   * The frontend environment ID this plugin collection belongs to.
    *
    * @var string
    */
@@ -28,7 +28,7 @@ class FrontendEnvironmentPluginCollection extends DefaultSingleLazyPluginCollect
    * @param array $configuration
    *   An array of configuration.
    * @param string $block_id
-   *   The unique ID of the block entity using this plugin.
+   *   The unique ID of the frontend environment entity using this plugin.
    */
   public function __construct(PluginManagerInterface $manager, $instance_id, array $configuration, $frontend_environment_id) {
     parent::__construct($manager, $instance_id, $configuration);
@@ -50,7 +50,7 @@ class FrontendEnvironmentPluginCollection extends DefaultSingleLazyPluginCollect
    */
   protected function initializePlugin($instance_id) {
     if (!$instance_id) {
-      throw new PluginException("The block '{$this->frontendEnvironmentId}' did not specify a plugin.");
+      throw new PluginException("The frontend environment '{$this->frontendEnvironmentId}' did not specify a plugin.");
     }
 
     try {

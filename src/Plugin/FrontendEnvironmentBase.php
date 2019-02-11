@@ -62,7 +62,7 @@ abstract class FrontendEnvironmentBase extends PluginBase implements FrontendEnv
   }
 
   /**
-   * Returns generic default configuration for block plugins.
+   * Returns generic default configuration for frontend environment plugins.
    *
    * @return array
    *   An associative array with the default configuration.
@@ -105,7 +105,7 @@ abstract class FrontendEnvironmentBase extends PluginBase implements FrontendEnv
   }
 
   /**
-   * Indicates whether the block should be shown.
+   * Indicates whether the frontend environment should be shown.
    *
    * Blocks with specific access checking should override this method rather
    * than access(), in order to avoid repeating the handling of the
@@ -146,7 +146,7 @@ abstract class FrontendEnvironmentBase extends PluginBase implements FrontendEnv
       '#required' => TRUE,
     ];
 
-    // Add plugin-specific settings for this block type.
+    // Add plugin-specific settings for this frontend environment type.
     $form += $this->frontEndEnvironmentForm($form, $form_state);
     return $form;
   }
@@ -161,10 +161,10 @@ abstract class FrontendEnvironmentBase extends PluginBase implements FrontendEnv
   /**
    * {@inheritdoc}
    *
-   * Most block plugins should not override this method. To add validation
-   * for a specific block type, override BlockBase::frontEndEnvironmentValidate().
+   * Most frontend environment plugins should not override this method. To add validation
+   * for a specific frontend environment type, override BlockBase::frontEndEnvironmentValidate().
    *
-   * @see \Drupal\Core\Block\BlockBase::frontEndEnvironmentValidate()
+   * @see \Drupal\Core\Frontend environment\BlockBase::frontEndEnvironmentValidate()
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
     $this->frontEndEnvironmentFormValidate($form, $form_state);
@@ -178,13 +178,13 @@ abstract class FrontendEnvironmentBase extends PluginBase implements FrontendEnv
   /**
    * {@inheritdoc}
    *
-   * Most block plugins should not override this method. To add submission
-   * handling for a specific block type, override BlockBase::frontEndEnvironmentSubmit().
+   * Most frontend environment plugins should not override this method. To add submission
+   * handling for a specific frontend environment type, override BlockBase::frontEndEnvironmentSubmit().
    *
-   * @see \Drupal\Core\Block\BlockBase::frontEndEnvironmentSubmit()
+   * @see \Drupal\Core\Frontend environment\BlockBase::frontEndEnvironmentSubmit()
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
-    // Process the block's submission handling if no errors occurred only.
+    // Process the frontend environment's submission handling if no errors occurred only.
     if (!$form_state->getErrors()) {
       $this->configuration['label'] = $form_state->getValue('label');
       $this->configuration['provider'] = $form_state->getValue('provider');

@@ -9,7 +9,7 @@ use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a list of block plugins to be added to the layout.
+ * Provides a list of frontend environment plugins to be added to the layout.
  */
 class FrontendEnvironmentLibraryController extends ControllerBase {
 
