@@ -1,6 +1,6 @@
-build_hooks.static_front_environment.*:
+build_hooks.frontend_environment.*:
   type: config_entity
-  label: 'Static front environment config'
+  label: 'Frontend environment config'
   mapping:
     id:
       type: string
@@ -30,7 +30,7 @@ build_hooks.static_front_environment.*:
       type: int
       label: 'Weight'
     settings:
-      type: static_front_environment.settings.[%parent.plugin]
+      type: frontend_environment.settings.[%parent.plugin]
     uuid:
       type: string
 

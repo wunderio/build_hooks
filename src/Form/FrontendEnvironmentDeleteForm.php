@@ -7,9 +7,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
 /**
- * Builds the form to delete Static front environment entities.
+ * Builds the form to delete Frontend environment entities.
  */
-class StaticFrontEnvironmentDeleteForm extends EntityConfirmFormBase {
+class FrontendEnvironmentDeleteForm extends EntityConfirmFormBase {
 
   /**
    * {@inheritdoc}
@@ -22,7 +22,7 @@ class StaticFrontEnvironmentDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('entity.static_front_environment.collection');
+    return new Url('entity.frontend_environment.collection');
   }
 
   /**

@@ -7,24 +7,24 @@ use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
 use Drupal\build_hooks\FrontendEnvironmentPluginCollection;
 
 /**
- * Defines the Static front environment entity.
+ * Defines the Frontend environment entity.
  *
  * @ConfigEntityType(
- *   id = "static_front_environment",
- *   label = @Translation("Static front environment"),
+ *   id = "frontend_environment",
+ *   label = @Translation("Front end environment"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\build_hooks\StaticFrontEnvironmentListBuilder",
+ *     "list_builder" = "Drupal\build_hooks\FrontendEnvironmentListBuilder",
  *     "form" = {
- *       "default" = "Drupal\build_hooks\Form\StaticFrontEnvironmentForm",
- *       "edit" = "Drupal\build_hooks\Form\StaticFrontEnvironmentForm",
- *       "delete" = "Drupal\build_hooks\Form\StaticFrontEnvironmentDeleteForm"
+ *       "default" = "Drupal\build_hooks\Form\FrontendEnvironmentForm",
+ *       "edit" = "Drupal\build_hooks\Form\FrontendEnvironmentForm",
+ *       "delete" = "Drupal\build_hooks\Form\FrontendEnvironmentDeleteForm"
  *     },
  *     "route_provider" = {
- *       "html" = "Drupal\build_hooks\StaticFrontEnvironmentHtmlRouteProvider",
+ *       "html" = "Drupal\build_hooks\FrontendEnvironmentHtmlRouteProvider",
  *     },
  *   },
- *   config_prefix = "static_front_environment",
+ *   config_prefix = "frontend_environment",
  *   admin_permission = "administer site configuration",
  *   entity_keys = {
  *     "id" = "id",
@@ -32,11 +32,11 @@ use Drupal\build_hooks\FrontendEnvironmentPluginCollection;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/admin/structure/static_front_environment/{static_front_environment}",
- *     "add-form" = "/admin/structure/static_front_environment/add",
- *     "edit-form" = "/admin/structure/static_front_environment/{static_front_environment}/edit",
- *     "delete-form" = "/admin/structure/static_front_environment/{static_front_environment}/delete",
- *     "collection" = "/admin/structure/static_front_environment"
+ *     "canonical" = "/admin/structure/frontend_environment/{frontend_environment}",
+ *     "add-form" = "/admin/structure/frontend_environment/add",
+ *     "edit-form" = "/admin/structure/frontend_environment/{frontend_environment}/edit",
+ *     "delete-form" = "/admin/structure/frontend_environment/{frontend_environment}/delete",
+ *     "collection" = "/admin/structure/frontend_environment"
  *   },
  *   config_export = {
  *     "id",
@@ -48,10 +48,10 @@ use Drupal\build_hooks\FrontendEnvironmentPluginCollection;
  *   },
  * )
  */
-class StaticFrontEnvironment extends ConfigEntityBase implements StaticFrontEnvironmentInterface, EntityWithPluginCollectionInterface {
+class FrontendEnvironment extends ConfigEntityBase implements FrontendEnvironmentInterface, EntityWithPluginCollectionInterface {
 
   /**
-   * The Static front environment ID.
+   * The Frontend environment ID.
    *
    * @var string
    */
@@ -72,7 +72,7 @@ class StaticFrontEnvironment extends ConfigEntityBase implements StaticFrontEnvi
   protected $plugin;
 
   /**
-   * The Static front environment label.
+   * The Frontend environment label.
    *
    * @var string
    */

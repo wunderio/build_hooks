@@ -10,7 +10,7 @@ use GuzzleHttp\ClientInterface;
 use Drupal\Core\StringTranslation\TranslationManager;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManager;
-use Drupal\build_hooks\Entity\StaticFrontEnvironment;
+use Drupal\build_hooks\Entity\FrontendEnvironment;
 
 /**
  * Class Trigger.
@@ -114,8 +114,8 @@ class Trigger implements TriggerInterface {
 
     // Load details of the environment:
     try {
-      /** @var StaticFrontEnvironment $environment */
-      $environment = $this->entityTypeManager->getStorage('static_front_environment')->load($environment_id);
+      /** @var FrontendEnvironment $environment */
+      $environment = $this->entityTypeManager->getStorage('frontend_environment')->load($environment_id);
     }
     catch (\Exception $e) {
       $message = $this->stringTranslation->translate(

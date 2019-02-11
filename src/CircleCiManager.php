@@ -3,7 +3,7 @@
 namespace Drupal\build_hooks;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use GuzzleHttp\ClientInterface;
-use Drupal\build_hooks\Entity\StaticFrontEnvironment;
+use Drupal\build_hooks\Entity\FrontendEnvironment;
 
 /**
  * Class CircleCiManager.
@@ -39,11 +39,11 @@ class CircleCiManager {
   /**
    * Build the url to trigger a circle ci build depending on the environment.
    *
-   * @param \Drupal\build_hooks\Entity\StaticFrontEnvironment $environment
+   * @param \Drupal\build_hooks\Entity\FrontendEnvironment $environment
    *
    * @return string
    */
-  private function buildCirlceCiApiBuildUrl(StaticFrontEnvironment $environment) {
+  private function buildCirlceCiApiBuildUrl(FrontendEnvironment $environment) {
     $circleCiConf = $this->configFactory->get('build_hooks.circleci');
     $apiKey = $circleCiConf->get('circleciapikey');
     return $this->buildCircleciApiBasePathForEnvironment($environment) . "build?circle-token=$apiKey";
@@ -52,12 +52,13 @@ class CircleCiManager {
   /**
    * Triggers a build on Circle ci for an environment
    *
-   * @param \Drupal\build_hooks\Entity\StaticFrontEnvironment $environment
+   * @param \Drupal\build_hooks\Entity\FrontendEnvironment $environment
+   *
    * @return bool
    *
    * @throws \GuzzleHttp\Exception\GuzzleException
    */
-  public function runCircleciWorkflowOnEnvironment(StaticFrontEnvironment $environment) {
+  public function runCircleciWorkflowOnEnvironment(FrontendEnvironment $environment) {
     $response = $this->httpClient->request('POST', $this->buildCirlceCiApiBuildUrl($environment), [
       'json' => [
         'branch' => $environment->getBranch(),
@@ -69,19 +70,20 @@ class CircleCiManager {
   /**
    * Triggers a build on Circle ci for an environment
    *
-   * @param \Drupal\build_hooks\Entity\StaticFrontEnvironment $environment
+   * @param \Drupal\build_hooks\Entity\FrontendEnvironment $environment
    *
    */
 
 
   /**
    * Get the latest x builds from Cicle ci for an environment
-   * @param \Drupal\build_hooks\Entity\StaticFrontEnvironment $environment
+   *
+   * @param \Drupal\build_hooks\Entity\FrontendEnvironment $environment
    * @param int $limit
    *
    * @throws \GuzzleHttp\Exception\GuzzleException
    */
-  public function retrieveLatestBuildsFromCicleciForEnvironment(StaticFrontEnvironment $environment, $limit = 1) {
+  public function retrieveLatestBuildsFromCicleciForEnvironment(FrontendEnvironment $environment, $limit = 1) {
     $url = $this->buildCirlceCiApiRetrieveBuildsUrl($environment, $limit);
     $options = ['headers' => [
       'Accept'     => 'application/json',
@@ -95,12 +97,12 @@ class CircleCiManager {
   /**
    *  Build the url to retrieve latest builds from circle ci for an environment.
    *
-   * @param \Drupal\build_hooks\Entity\StaticFrontEnvironment $environment
+   * @param \Drupal\build_hooks\Entity\FrontendEnvironment $environment
    * @param int $limit
    *
    * @return string
    */
-  private function buildCirlceCiApiRetrieveBuildsUrl(StaticFrontEnvironment $environment, $limit) {
+  private function buildCirlceCiApiRetrieveBuildsUrl(FrontendEnvironment $environment, $limit) {
     $circleCiConf = $this->configFactory->get('build_hooks.circleci');
     $apiKey = $circleCiConf->get('circleciapikey');
     $branch = $environment->getBranch();
@@ -110,11 +112,11 @@ class CircleCiManager {
   /**
    * Build the url to call circle ci depending on the environment.
    *
-   * @param \Drupal\build_hooks\Entity\StaticFrontEnvironment $environment
+   * @param \Drupal\build_hooks\Entity\FrontendEnvironment $environment
    *
    * @return string
    */
-  private function buildCircleciApiBasePathForEnvironment(StaticFrontEnvironment $environment) {
+  private function buildCircleciApiBasePathForEnvironment(FrontendEnvironment $environment) {
     $basePath = self::CIRCLECI_BASE_PATH;
     $platform = self::CIRCLECI_HOSTED_PLATFORM;
     $project = $environment->getProject();

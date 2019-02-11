@@ -4,7 +4,7 @@ namespace Drupal\build_hooks\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\build_hooks\Entity\StaticFrontEnvironment;
+use Drupal\build_hooks\Entity\FrontendEnvironment;
 use Drupal\Core\Form\SubformState;
 use Drupal\build_hooks\Plugin\FrontendEnvironmentInterface;
 use Drupal\Core\Plugin\PluginWithFormsInterface;
@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Class StaticFrontEnvironmentForm.
  */
-class StaticFrontEnvironmentForm extends EntityForm {
+class FrontendEnvironmentForm extends EntityForm {
 
   /**
    * The plugin form manager.
@@ -44,7 +44,7 @@ class StaticFrontEnvironmentForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
-    /** @var StaticFrontEnvironment $envEntity */
+    /** @var FrontendEnvironment $envEntity */
     $envEntity = $this->entity;
 
     $static_front_environment = $this->entity;
@@ -53,7 +53,7 @@ class StaticFrontEnvironmentForm extends EntityForm {
       '#title' => $this->t('Label'),
       '#maxlength' => 255,
       '#default_value' => $static_front_environment->label(),
-      '#description' => $this->t("Label for the Static front environment."),
+      '#description' => $this->t("Label for the Frontend environment."),
       '#required' => TRUE,
     ];
 
@@ -61,7 +61,7 @@ class StaticFrontEnvironmentForm extends EntityForm {
       '#type' => 'machine_name',
       '#default_value' => $static_front_environment->id(),
       '#machine_name' => [
-        'exists' => '\Drupal\build_hooks\Entity\StaticFrontEnvironment::load',
+        'exists' => '\Drupal\build_hooks\Entity\FrontendEnvironment::load',
       ],
       '#disabled' => !$static_front_environment->isNew(),
     ];
@@ -137,13 +137,13 @@ class StaticFrontEnvironmentForm extends EntityForm {
 //
 //    switch ($status) {
 //      case SAVED_NEW:
-//        drupal_set_message($this->t('Created the %label Static front environment.', [
+//        drupal_set_message($this->t('Created the %label Frontend environment.', [
 //          '%label' => $static_front_environment->label(),
 //        ]));
 //        break;
 //
 //      default:
-//        drupal_set_message($this->t('Saved the %label Static front environment.', [
+//        drupal_set_message($this->t('Saved the %label Frontend environment.', [
 //          '%label' => $static_front_environment->label(),
 //        ]));
 //    }

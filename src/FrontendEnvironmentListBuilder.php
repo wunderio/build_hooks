@@ -6,15 +6,15 @@ use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
- * Provides a listing of Static front environment entities.
+ * Provides a listing of Frontend environment entities.
  */
-class StaticFrontEnvironmentListBuilder extends ConfigEntityListBuilder {
+class FrontendEnvironmentListBuilder extends ConfigEntityListBuilder {
 
   /**
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['label'] = $this->t('Static front environment');
+    $header['label'] = $this->t('Frontend environment');
     $header['id'] = $this->t('Machine name');
     return $header + parent::buildHeader();
   }

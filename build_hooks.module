@@ -71,13 +71,13 @@ function build_hooks_toolbar() {
     $entityTypeManager = \Drupal::service('entity_type.manager');
 
     // Load all defined environments:
-    $allEnvironments = $entityTypeManager->getStorage('static_front_environment')
+    $allEnvironments = $entityTypeManager->getStorage('frontend_environment')
       ->loadMultiple();
 
     if (!empty($allEnvironments)) {
       $items = [];
       foreach ($allEnvironments as $environment) {
-        /** @var \Drupal\build_hooks\Entity\StaticFrontEnvironment $environment */
+        /** @var \Drupal\build_hooks\Entity\FrontendEnvironment $environment */
         $items[$environment->id()] = [
           '#cache' => [
             'max-age' => 0,
@@ -90,7 +90,7 @@ function build_hooks_toolbar() {
               '@envName' => $environment->label(),
               '@num' => getLoggerService()->getNumberOfItemsSinceLastDeploymentForEnvironment($environment),
             ]),
-            '#url' => Url::fromRoute('build_hooks.deployment_form', ['static_front_environment' => $environment->id()]),
+            '#url' => Url::fromRoute('build_hooks.deployment_form', ['frontend_environment' => $environment->id()]),
           ],
         ];
       }

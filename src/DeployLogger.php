@@ -5,7 +5,7 @@ use Drupal\Core\Logger\LoggerChannel;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Database\Connection;
-use Drupal\build_hooks\Entity\StaticFrontEnvironment;
+use Drupal\build_hooks\Entity\FrontendEnvironment;
 
 /**
  * Class DeployLogger.
@@ -96,20 +96,20 @@ class DeployLogger {
   /**
    * Get the last deployed time for an environment.
    *
-   * @param \Drupal\build_hooks\Entity\StaticFrontEnvironment $environment
+   * @param \Drupal\build_hooks\Entity\FrontendEnvironment $environment
    */
-  public function setLastDeployTimeForEnvironment(StaticFrontEnvironment $environment) {
+  public function setLastDeployTimeForEnvironment(FrontendEnvironment $environment) {
     $this->state->set('lastDeployForEnv' . $environment->getBranch(), time());
   }
 
   /**
    * Get the last deployed time for an environment.
    *
-   * @param \Drupal\build_hooks\Entity\StaticFrontEnvironment $environment
+   * @param \Drupal\build_hooks\Entity\FrontendEnvironment $environment
    *
    * @return mixed
    */
-  public function getLastDeployTimeForEnvironment(StaticFrontEnvironment $environment) {
+  public function getLastDeployTimeForEnvironment(FrontendEnvironment $environment) {
     return $this->state->get('lastDeployForEnv' . $environment->getBranch(), 0);
   }
 
@@ -143,7 +143,7 @@ class DeployLogger {
    *
    * @return int
    */
-  public function getNumberOfItemsSinceLastDeploymentForEnvironment(StaticFrontEnvironment $environment) {
+  public function getNumberOfItemsSinceLastDeploymentForEnvironment(FrontendEnvironment $environment) {
     $timestamp = $this->getLastDeployTimeForEnvironment($environment);
     $elements = $this->getLogItemsSinceTimestamp($timestamp);
     return count($elements);

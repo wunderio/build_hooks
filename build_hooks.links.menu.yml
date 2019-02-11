@@ -5,11 +5,11 @@ build_hooks.hook_form:
   parent: system.admin_config_system
   weight: 99
 
-# Static front environment menu items definition
-entity.static_front_environment.collection:
-  title: 'Static front environment'
-  route_name: entity.static_front_environment.collection
-  description: 'List Static front environment (bundles)'
+# Frontend environment menu items definition
+entity.frontend_environment.collection:
+  title: 'Frontend environment'
+  route_name: entity.frontend_environment.collection
+  description: 'List Frontend environment (bundles)'
   parent: system.admin_structure
   weight: 99
 

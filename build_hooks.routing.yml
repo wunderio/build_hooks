@@ -18,14 +18,14 @@ build_hooks.trigger_controller_execute:
     _permission: 'deploy to endpoints'
 
 build_hooks.deployment_form:
-  path: '/build_hooks/form/deployment/{static_front_environment}'
+  path: '/build_hooks/form/deployment/{frontend_environment}'
   defaults:
     _form: '\Drupal\build_hooks\Form\DeploymentForm'
     _title: 'Manage environment'
   options:
     parameters:
-      static_front_environment:
-        type: entity:static_front_environment
+      frontend_environment:
+        type: entity:frontend_environment
   requirements:
     _permission: 'deploy to endpoints'
 build_hooks.admin_display_theme:
@@ -38,10 +38,10 @@ build_hooks.admin_display_theme:
   options:
     _admin_route: TRUE
 build_hooks.admin_add:
-  path: '/admin/structure/fronts/add/{plugin_id}'
+  path: '/admin/structure/frontend_environment/add/{plugin_id}'
   defaults:
     _controller: '\Drupal\build_hooks\Controller\FrontendEnvironmentAddController::frontendEnvironmentAddConfigureForm'
     theme: null
-    _title: 'Configure block'
+    _title: 'Add new frontend environment'
   requirements:
     _permission: 'access administration pages'

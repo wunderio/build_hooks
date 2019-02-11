@@ -3,7 +3,7 @@
 namespace Drupal\build_hooks\Form;
 
 use Drupal\build_hooks\CircleCiManager;
-use Drupal\build_hooks\Entity\StaticFrontEnvironment;
+use Drupal\build_hooks\Entity\FrontendEnvironment;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Renderer;
@@ -87,7 +87,7 @@ class DeploymentForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, StaticFrontEnvironment $static_front_environment = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, FrontendEnvironment $static_front_environment = NULL) {
 
     $last_deployment_timestamp = $this->buildHooksDeploylogger->getLastDeployTimeForEnvironment($static_front_environment);
     $last_deployment_timestamp_formatted = $this->dateFormatter->format($last_deployment_timestamp, 'long');
@@ -200,7 +200,7 @@ class DeploymentForm extends FormBase {
   }
 
 
-  private function getLastCicleCiDeploymentsTable(StaticFrontEnvironment $environment) {
+  private function getLastCicleCiDeploymentsTable(FrontendEnvironment $environment) {
     $circleCiData = $this->circleCiManager->retrieveLatestBuildsFromCicleciForEnvironment($environment, 8);
     $element = [
       '#type' => 'table',

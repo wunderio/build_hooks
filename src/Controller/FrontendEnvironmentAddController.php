@@ -22,7 +22,7 @@ class FrontendEnvironmentAddController extends ControllerBase {
    */
   public function frontendEnvironmentAddConfigureForm($plugin_id) {
     // Create a block entity.
-    $entity = $this->entityTypeManager()->getStorage('static_front_environment')->create(['plugin' => $plugin_id]);
+    $entity = $this->entityTypeManager()->getStorage('frontend_environment')->create(['plugin' => $plugin_id]);
 
     return $this->entityFormBuilder()->getForm($entity);
   }
