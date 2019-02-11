@@ -70,11 +70,6 @@ class Trigger implements TriggerInterface {
   protected $entityTypeManager;
 
   /**
-   * @var \Drupal\build_hooks\CircleCiManager
-   */
-  protected $circleciManager;
-
-  /**
    * Constructs a new Trigger object.
    */
   public function __construct(
@@ -85,8 +80,7 @@ class Trigger implements TriggerInterface {
     MessengerInterface $messenger,
     LoggerChannelFactoryInterface $logger,
     DeployLogger $deployLogger,
-    EntityTypeManager $entityTypeManager,
-    CircleCiManager $circleCiManager
+    EntityTypeManager $entityTypeManager
   ) {
     $this->configFactory = $configFactory;
     $this->httpClient = $httpClient;
@@ -96,7 +90,6 @@ class Trigger implements TriggerInterface {
     $this->logger = $logger;
     $this->deployLogger = $deployLogger;
     $this->entityTypeManager = $entityTypeManager;
-    $this->circleciManager = $circleCiManager;
   }
 
   /**

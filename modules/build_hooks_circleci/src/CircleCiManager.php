@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\build_hooks;
+namespace Drupal\build_hooks_circleci;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use GuzzleHttp\ClientInterface;
 use Drupal\build_hooks\Entity\FrontendEnvironment;
@@ -68,15 +68,7 @@ class CircleCiManager {
   }
 
   /**
-   * Triggers a build on Circle ci for an environment
-   *
-   * @param \Drupal\build_hooks\Entity\FrontendEnvironment $environment
-   *
-   */
-
-
-  /**
-   * Get the latest x builds from Cicle ci for an environment
+   * Get the latest x builds from Cicle ci for an environment.
    *
    * @param \Drupal\build_hooks\Entity\FrontendEnvironment $environment
    * @param int $limit

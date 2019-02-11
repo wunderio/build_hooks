@@ -48,8 +48,6 @@ class DeploymentForm extends FormBase {
    */
   protected $dateFormatter;
 
-  protected $circleCiManager;
-
   /**
    * Constructs a new DeploymentForm object.
    */
@@ -57,14 +55,12 @@ class DeploymentForm extends FormBase {
     TriggerInterface $build_hooks_trigger,
     DeployLogger $build_hooks_deploylogger,
     Renderer $renderer,
-    DateFormatter $dateFormatter,
-    CircleCiManager $circleCiManager
+    DateFormatter $dateFormatter
   ) {
     $this->buildHooksTrigger = $build_hooks_trigger;
     $this->buildHooksDeploylogger = $build_hooks_deploylogger;
     $this->renderer = $renderer;
     $this->dateFormatter = $dateFormatter;
-    $this->circleCiManager = $circleCiManager;
   }
 
   public static function create(ContainerInterface $container) {
@@ -72,8 +68,7 @@ class DeploymentForm extends FormBase {
       $container->get('build_hooks.trigger'),
       $container->get('build_hooks.deploylogger'),
       $container->get('renderer'),
-      $container->get('date.formatter'),
-      $container->get('build_hooks.circleci_manager')
+      $container->get('date.formatter')
     );
   }
 
@@ -87,21 +82,21 @@ class DeploymentForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, FrontendEnvironment $static_front_environment = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, FrontendEnvironment $frontend_environment = NULL) {
 
-    $last_deployment_timestamp = $this->buildHooksDeploylogger->getLastDeployTimeForEnvironment($static_front_environment);
+    $last_deployment_timestamp = $this->buildHooksDeploylogger->getLastDeployTimeForEnvironment($frontend_environment);
     $last_deployment_timestamp_formatted = $this->dateFormatter->format($last_deployment_timestamp, 'long');
-    $environmentName = $static_front_environment->label();
+    $environmentName = $frontend_environment->label();
 
     $form['display'] = [
-      '#markup' => '<h2>' . t('@envName Environment', ['@envName' => $static_front_environment->label()]) . '</h2>',
+      '#markup' => '<h2>' . t('@envName Environment', ['@envName' => $frontend_environment->label()]) . '</h2>',
     ];
 
     $form['environment link'] = [
       '#markup' => t('Frontend @environmentName site url: @link', [
-        '@link' => Link::fromTextAndUrl($static_front_environment->getUrl(), Url::fromUri($static_front_environment->getUrl(), ['attributes' => ['target' => '_blank']]))
+        '@link' => Link::fromTextAndUrl($frontend_environment->getUrl(), Url::fromUri($frontend_environment->getUrl(), ['attributes' => ['target' => '_blank']]))
           ->toString(),
-        '@environmentName' => $static_front_environment->label()
+        '@environmentName' => $frontend_environment->label()
       ]),
     ];
 
@@ -116,7 +111,7 @@ class DeploymentForm extends FormBase {
       '#open' => TRUE,
     ];
 
-    if ($this->buildHooksDeploylogger->getNumberOfItemsSinceLastDeploymentForEnvironment($static_front_environment) > 0) {
+    if ($this->buildHooksDeploylogger->getNumberOfItemsSinceLastDeploymentForEnvironment($frontend_environment) > 0) {
 
       $form['changelog']['log'] = [
         '#markup' => $this->getChangelogView($last_deployment_timestamp),
@@ -135,31 +130,31 @@ class DeploymentForm extends FormBase {
     ];
 
 
-    $form['latestCircleCiDeployments']['table'] = $this->getLastCicleCiDeploymentsTable($static_front_environment);
+    //$form['latestCircleCiDeployments']['table'] = $this->getLastCicleCiDeploymentsTable($frontend_environment);
 
-    $form['latestCircleCiDeployments']['refresher'] = [
-      '#type' => 'button',
-      '#ajax' => [
-        'callback' => '::refreshDeploymentTable',
-        'wrapper' => 'ajax-replace-table',
-        'effect' => 'fade',
-        'progress' => [
-          'type' => 'throbber',
-          'message' => t('Refreshing deployment status...'),
-        ],
-      ],
-      '#value' => $this->t('Refresh'),
-    ];
-
-    $form['environment_id'] = [
-      '#type' => 'value',
-      '#value' => $static_front_environment->id(),
-    ];
-
-    $form['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Start a new deployment to the @environment environment', ['@environment' => $static_front_environment->label()]),
-    ];
+//    $form['latestCircleCiDeployments']['refresher'] = [
+//      '#type' => 'button',
+//      '#ajax' => [
+//        'callback' => '::refreshDeploymentTable',
+//        'wrapper' => 'ajax-replace-table',
+//        'effect' => 'fade',
+//        'progress' => [
+//          'type' => 'throbber',
+//          'message' => t('Refreshing deployment status...'),
+//        ],
+//      ],
+//      '#value' => $this->t('Refresh'),
+//    ];
+//
+//    $form['environment_id'] = [
+//      '#type' => 'value',
+//      '#value' => $frontend_environment->id(),
+//    ];
+//
+//    $form['submit'] = [
+//      '#type' => 'submit',
+//      '#value' => $this->t('Start a new deployment to the @environment environment', ['@environment' => $frontend_environment->label()]),
+//    ];
 
     return $form;
   }
@@ -189,10 +184,7 @@ class DeploymentForm extends FormBase {
    * @return mixed
    */
   private function getChangelogView($timestamp) {
-    // TODO: To save time we are using a view that we feed using arguments.
-    // this should be done in a template function, or providing a correct
-    // field for the view.
-    $thisView = Views::getView('editing_log');
+    $thisView = Views::getView('build_hooks_edititing_log');
     $wids = $this->buildHooksDeploylogger->getLogItemsSinceTimestamp($timestamp);
     $arg = implode('+', $wids);
     // TODO: do not use drupal_render
@@ -242,9 +234,6 @@ class DeploymentForm extends FormBase {
     return $element;
   }
 
-  /**
-   * Handles switching the available regions based on the selected theme.
-   */
   public function refreshDeploymentTable($form, FormStateInterface $form_state) {
     return $form['latestCircleCiDeployments']['table'];
   }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\build_hooks\Plugin\FrontendEnvironment;
+namespace Drupal\build_hooks_circleci\Plugin\FrontendEnvironment;
 
 use Drupal\build_hooks\Annotation\FrontendEnvironment;
 use Drupal\build_hooks\Plugin\FrontendEnvironmentBase;
@@ -45,7 +45,6 @@ class CircleCiFrontendEnvironment extends FrontendEnvironmentBase {
    */
   public function frontEndEnvironmentSubmit($form, FormStateInterface $form_state) {
     $this->configuration['project'] = $form_state->getValue('project');
-    $this->configuration['branch'] = $form_state->getValue('branch');
   }
 
 }

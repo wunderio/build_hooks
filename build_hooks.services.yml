@@ -1,7 +1,7 @@
 services:
   build_hooks.trigger:
     class: Drupal\build_hooks\Trigger
-    arguments: ['@config.factory', '@http_client', '@current_user', '@string_translation', '@messenger', '@logger.factory', '@build_hooks.deploylogger', '@entity_type.manager', '@build_hooks.circleci_manager']
+    arguments: ['@config.factory', '@http_client', '@current_user', '@string_translation', '@messenger', '@logger.factory', '@build_hooks.deploylogger', '@entity_type.manager']
   build_hooks.deploylogger:
     class: Drupal\build_hooks\DeployLogger
     arguments: ['@logger.channel.build_hooks_logger', '@state', '@database']

@@ -97,11 +97,11 @@ class FrontendEnvironmentLibraryController extends ControllerBase {
       $rows[] = $row;
     }
 
-    $build['blocks'] = [
+    $build['frontend_environments'] = [
       '#type' => 'table',
       '#header' => $headers,
       '#rows' => $rows,
-      '#empty' => $this->t('No blocks available.'),
+      '#empty' => $this->t('No types available. Please enable one of the submodules or add your own custom plugin.'),
       '#attributes' => [
         'class' => ['block-add-table'],
       ],

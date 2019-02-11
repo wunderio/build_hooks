@@ -18,10 +18,10 @@ build_hooks.trigger_controller_execute:
     _permission: 'deploy to endpoints'
 
 build_hooks.deployment_form:
-  path: '/build_hooks/form/deployment/{frontend_environment}'
+  path: '/admin/build_hooks/deployments/{frontend_environment}'
   defaults:
     _form: '\Drupal\build_hooks\Form\DeploymentForm'
-    _title: 'Manage environment'
+    _title: 'Frontend environment deployment'
   options:
     parameters:
       frontend_environment:

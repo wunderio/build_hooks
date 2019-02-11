@@ -1,0 +1,7 @@
+name: 'Build Hooks for Circle CI'
+type: module
+description: 'Supports creating frontend environments connected to circle ci environments.'
+core: 8.x
+package: 'Build hooks'
+dependencies:
+  - build_hooks
