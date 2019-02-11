@@ -1,0 +1,16 @@
+services:
+  build_hooks.trigger:
+    class: Drupal\build_hooks\Trigger
+    arguments: ['@config.factory', '@http_client', '@current_user', '@string_translation', '@messenger', '@logger.factory', '@build_hooks.deploylogger', '@entity_type.manager', '@build_hooks.circleci_manager']
+  build_hooks.deploylogger:
+    class: Drupal\build_hooks\DeployLogger
+    arguments: ['@logger.channel.build_hooks_logger', '@state', '@database']
+  logger.channel.build_hooks_logger:
+    parent: logger.channel_base
+    arguments: ['build_hooks_logger']
+  build_hooks.circleci_manager:
+    class: Drupal\build_hooks\CircleCiManager
+    arguments: ['@config.factory', '@http_client']
+  plugin.manager.frontend_environment:
+    class: Drupal\build_hooks\Plugin\FrontendEnvironmentManager
+    parent: default_plugin_manager

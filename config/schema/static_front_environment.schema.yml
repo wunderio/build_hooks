@@ -1,0 +1,39 @@
+build_hooks.static_front_environment.*:
+  type: config_entity
+  label: 'Static front environment config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    provider:
+      type: string
+      label: 'Provider'
+    type:
+      type: string
+      label: 'Type'
+    project:
+      type: string
+      label: 'Project'
+    plugin:
+      type: string
+      label: 'Plugin'
+    branch:
+      type: string
+      label: 'Branch'
+    url:
+      type: string
+      label: 'Url'
+    weight:
+      type: int
+      label: 'Weight'
+    settings:
+      type: static_front_environment.settings.[%parent.plugin]
+    uuid:
+      type: string
+
+
+
+

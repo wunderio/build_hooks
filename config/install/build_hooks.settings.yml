@@ -1,0 +1,7 @@
+triggers:
+  cron: 0
+  menu: 1
+  node: ~
+messages:
+  log: 1
+  show: 1

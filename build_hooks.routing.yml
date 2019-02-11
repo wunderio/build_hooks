@@ -1,0 +1,47 @@
+build_hooks.hook_form:
+  path: '/admin/config/build_hooks/settings'
+  defaults:
+    _form: '\Drupal\build_hooks\Form\SettingsForm'
+    _title: 'Build Hooks Settings'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE
+
+build_hooks.trigger_controller_execute:
+  path: '/build_hooks/execute/{branch}'
+  defaults:
+    _controller: '\Drupal\build_hooks\Controller\TriggerController::execute'
+    _title: 'Trigger Build'
+    branch: 'master'
+  requirements:
+    _permission: 'deploy to endpoints'
+
+build_hooks.deployment_form:
+  path: '/build_hooks/form/deployment/{static_front_environment}'
+  defaults:
+    _form: '\Drupal\build_hooks\Form\DeploymentForm'
+    _title: 'Manage environment'
+  options:
+    parameters:
+      static_front_environment:
+        type: entity:static_front_environment
+  requirements:
+    _permission: 'deploy to endpoints'
+build_hooks.admin_display_theme:
+  path: '/admin/structure/fronts'
+  defaults:
+    _controller: '\Drupal\build_hooks\Controller\FrontendEnvironmentLibraryController::listFrontendEnvironments'
+    _title: 'Block layout'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE
+build_hooks.admin_add:
+  path: '/admin/structure/fronts/add/{plugin_id}'
+  defaults:
+    _controller: '\Drupal\build_hooks\Controller\FrontendEnvironmentAddController::frontendEnvironmentAddConfigureForm'
+    theme: null
+    _title: 'Configure block'
+  requirements:
+    _permission: 'access administration pages'

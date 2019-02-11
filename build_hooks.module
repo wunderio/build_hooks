@@ -1,0 +1,119 @@
+<?php
+
+/**
+ * @file
+ * Contains build_hooks.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_help().
+ */
+function build_hooks_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the build_hooks module.
+    case 'help.page.build_hooks':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Build Hooks') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implement hook_cron.
+ */
+function build_hooks_cron() {
+  getTriggerService()->executeCron();
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function build_hooks_entity_update(EntityInterface $entity) {
+  if ($entity instanceof ContentEntityInterface) {
+    if (!$entity->isNew()) {
+      getLoggerService()->logEntityUpdated($entity);
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function build_hooks_entity_insert(EntityInterface $entity) {
+  if ($entity instanceof ContentEntityInterface) {
+    getLoggerService()->logEntityCreated($entity);
+  }
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function build_hooks_entity_delete(EntityInterface $entity) {
+  if ($entity instanceof ContentEntityInterface) {
+    getLoggerService()->logEntityDeleted($entity);
+  }
+}
+
+/**
+ * Implements hook_toolbar().
+ */
+function build_hooks_toolbar() {
+  if (getTriggerService()->showMenu()) {
+    /** @var \Drupal\Core\Entity\EntityTypeManager $entityTypeManager */
+    $entityTypeManager = \Drupal::service('entity_type.manager');
+
+    // Load all defined environments:
+    $allEnvironments = $entityTypeManager->getStorage('static_front_environment')
+      ->loadMultiple();
+
+    if (!empty($allEnvironments)) {
+      $items = [];
+      foreach ($allEnvironments as $environment) {
+        /** @var \Drupal\build_hooks\Entity\StaticFrontEnvironment $environment */
+        $items[$environment->id()] = [
+          '#cache' => [
+            'max-age' => 0,
+          ],
+          '#weight' => $environment->getWeight() + 999,
+          '#type' => 'toolbar_item',
+          'tab' => [
+            '#type' => 'link',
+            '#title' => t('@envName environment (@num changes)', [
+              '@envName' => $environment->label(),
+              '@num' => getLoggerService()->getNumberOfItemsSinceLastDeploymentForEnvironment($environment),
+            ]),
+            '#url' => Url::fromRoute('build_hooks.deployment_form', ['static_front_environment' => $environment->id()]),
+          ],
+        ];
+      }
+      return $items;
+    }
+  }
+}
+
+/**
+ * Get the trigger service.
+ *
+ * @return \Drupal\build_hooks\Trigger
+ */
+function getTriggerService() {
+  return \Drupal::service('build_hooks.trigger');
+}
+
+/**
+ * Get the deploy logger service.
+ *
+ * @return \Drupal\build_hooks\DeployLogger
+ */
+function getLoggerService() {
+  return \Drupal::service('build_hooks.deploylogger');
+}
+

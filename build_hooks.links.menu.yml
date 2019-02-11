@@ -1,0 +1,15 @@
+build_hooks.hook_form:
+  title: 'Build Hook Settings'
+  route_name: build_hooks.hook_form
+  description: 'Build Hook Settings Form'
+  parent: system.admin_config_system
+  weight: 99
+
+# Static front environment menu items definition
+entity.static_front_environment.collection:
+  title: 'Static front environment'
+  route_name: entity.static_front_environment.collection
+  description: 'List Static front environment (bundles)'
+  parent: system.admin_structure
+  weight: 99
+

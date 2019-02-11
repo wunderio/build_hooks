@@ -1,0 +1,6 @@
+entity.static_front_environment.add_form:
+  route_name: entity.static_front_environment.add_form
+  title: 'Add Static front environment'
+  appears_on:
+    - entity.static_front_environment.collection
+
