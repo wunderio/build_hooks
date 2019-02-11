@@ -10,15 +10,14 @@ use Drupal\Core\Controller\ControllerBase;
 class FrontendEnvironmentAddController extends ControllerBase {
 
   /**
-   * Build the block instance add form.
+   * Add the Frontend environment form.
    *
-   * @param string $plugin_id
-   *   The plugin ID for the block instance.
-   * @param string $theme
-   *   The name of the theme for the block instance.
+   * @param $plugin_id
+   *   The plugin id of the frontend environment.
    *
    * @return array
-   *   The block instance edit form.
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function frontendEnvironmentAddConfigureForm($plugin_id) {
     // Create a frontend environment entity.

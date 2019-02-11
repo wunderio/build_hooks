@@ -37,15 +37,6 @@ class CircleCiFrontendEnvironment extends FrontendEnvironmentBase {
       '#required' => TRUE,
     ];
 
-    $form['branch'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Git branch'),
-      '#maxlength' => 255,
-      '#default_value' => $this->configuration['branch'],
-      '#description' => $this->t("Git branch to deploy to for this environment."),
-      '#required' => TRUE,
-    ];
-
     return $form;
   }
 

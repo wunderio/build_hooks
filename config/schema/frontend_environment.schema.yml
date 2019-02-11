@@ -11,12 +11,6 @@ build_hooks.frontend_environment.*:
     provider:
       type: string
       label: 'Provider'
-    type:
-      type: string
-      label: 'Type'
-    project:
-      type: string
-      label: 'Project'
     plugin:
       type: string
       label: 'Plugin'

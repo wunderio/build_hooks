@@ -40,11 +40,13 @@ use Drupal\build_hooks\FrontendEnvironmentPluginCollection;
  *   },
  *   config_export = {
  *     "id",
+ *     "label",
  *     "weight",
  *     "provider",
  *     "plugin",
  *     "settings",
  *     "url",
+ *     "branch"
  *   },
  * )
  */
@@ -79,20 +81,6 @@ class FrontendEnvironment extends ConfigEntityBase implements FrontendEnvironmen
   protected $label;
 
   /**
-   * The type of environment.
-   *
-   * @var string
-   */
-  protected $type;
-
-  /**
-   * The project name of the environment.
-   *
-   * @var string
-   */
-  protected $project;
-
-  /**
    * The git branch name of the environment.
    *
    * @var string
@@ -123,20 +111,6 @@ class FrontendEnvironment extends ConfigEntityBase implements FrontendEnvironmen
   /**
    * @return string
    */
-  public function getType() {
-    return $this->type;
-  }
-
-  /**
-   * @return string
-   */
-  public function getProject() {
-    return $this->project;
-  }
-
-  /**
-   * @return string
-   */
   public function getBranch() {
     return $this->branch;
   }
@@ -156,10 +130,10 @@ class FrontendEnvironment extends ConfigEntityBase implements FrontendEnvironmen
   }
 
   /**
-   * Encapsulates the creation of the block's LazyPluginCollection.
+   * Encapsulates the creation of the frontend environment's LazyPluginCollection.
    *
    * @return \Drupal\Component\Plugin\LazyPluginCollection
-   *   The block's plugin collection.
+   *   The frontend environment's plugin collection.
    */
   protected function getPluginCollection() {
     if (!$this->pluginCollection) {

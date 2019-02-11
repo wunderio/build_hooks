@@ -44,45 +44,42 @@ class FrontendEnvironmentForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
-    /** @var FrontendEnvironment $envEntity */
-    $envEntity = $this->entity;
+    /** @var FrontendEnvironment $entity */
+    $entity = $this->entity;
 
-    $static_front_environment = $this->entity;
     $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
       '#maxlength' => 255,
-      '#default_value' => $static_front_environment->label(),
+      '#default_value' => $entity->label(),
       '#description' => $this->t("Label for the Frontend environment."),
       '#required' => TRUE,
     ];
 
     $form['id'] = [
       '#type' => 'machine_name',
-      '#default_value' => $static_front_environment->id(),
+      '#default_value' => $entity->id(),
       '#machine_name' => [
         'exists' => '\Drupal\build_hooks\Entity\FrontendEnvironment::load',
       ],
-      '#disabled' => !$static_front_environment->isNew(),
-    ];
-
-    /*$form['type'] = [
-
-
-      '#type' => 'select',
-      '#title' => $this->t('Environment type'),
-      '#default_value' => $envEntity->getType(),
-      '#options' => ['circleci' => 'Circle Ci'],
-      '#description' => $this->t("Select the environment type. (For now only circleCI is available)"),
-      '#required' => TRUE,
+      '#disabled' => !$entity->isNew(),
     ];
 
     $form['url'] = [
       '#type' => 'url',
       '#title' => $this->t('Url'),
       '#maxlength' => 255,
-      '#default_value' => $envEntity->getUrl(),
+      '#default_value' => $entity->getUrl(),
       '#description' => $this->t("Url at which this environment is available for viewing."),
+      '#required' => TRUE,
+    ];
+
+    $form['branch'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Git branch'),
+      '#maxlength' => 255,
+      '#default_value' => $entity->getBranch(),
+      '#description' => $this->t("Git branch to deploy to for this environment."),
       '#required' => TRUE,
     ];
 
@@ -92,16 +89,15 @@ class FrontendEnvironmentForm extends EntityForm {
       '#max' => 100,
       '#min' => -100,
       '#size' => 3,
-      '#default_value' => $envEntity->getWeight() ? $envEntity->getWeight() : 0,
+      '#default_value' => $entity->getWeight() ? $entity->getWeight() : 0,
       '#description' => $this->t("Set the weight, lighter environments will be rendered first in the toolbar."),
       '#required' => TRUE,
     ];
-*/
 
     $form['#tree'] = TRUE;
     $form['settings'] = [];
     $subform_state = SubformState::createForSubform($form['settings'], $form, $form_state);
-    $form['settings'] = $this->getPluginForm($envEntity->getPlugin())->buildConfigurationForm($form['settings'], $subform_state);
+    $form['settings'] = $this->getPluginForm($entity->getPlugin())->buildConfigurationForm($form['settings'], $subform_state);
     return $form;
   }
 
@@ -124,32 +120,9 @@ class FrontendEnvironmentForm extends EntityForm {
     $entity->save();
 
     $this->messenger()
-      ->addStatus($this->t('The block configuration has been saved.'));
+      ->addStatus($this->t('The frontend environment configuration has been saved.'));
     $form_state->setRedirectUrl($entity->toUrl('collection'));
   }
-
-//  /**
-//   * {@inheritdoc}
-//   */
-//  public function save(array $form, FormStateInterface $form_state) {
-//    $static_front_environment = $this->entity;
-//    $status = $static_front_environment->save();
-//
-//    switch ($status) {
-//      case SAVED_NEW:
-//        drupal_set_message($this->t('Created the %label Frontend environment.', [
-//          '%label' => $static_front_environment->label(),
-//        ]));
-//        break;
-//
-//      default:
-//        drupal_set_message($this->t('Saved the %label Frontend environment.', [
-//          '%label' => $static_front_environment->label(),
-//        ]));
-//    }
-//    $form_state->setRedirectUrl($static_front_environment->toUrl('collection'));
-//  }
-
 
   protected function getPluginForm(FrontendEnvironmentInterface $frontendEnvironment) {
     if ($frontendEnvironment instanceof PluginWithFormsInterface) {
