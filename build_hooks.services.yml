@@ -4,7 +4,7 @@ services:
     arguments: ['@config.factory', '@http_client', '@current_user', '@string_translation', '@messenger', '@logger.factory', '@build_hooks.deploylogger', '@entity_type.manager']
   build_hooks.deploylogger:
     class: Drupal\build_hooks\DeployLogger
-    arguments: ['@logger.channel.build_hooks_logger', '@state', '@database']
+    arguments: ['@config.factory', '@logger.channel.build_hooks_logger', '@state', '@database']
   logger.channel.build_hooks_logger:
     parent: logger.channel_base
     arguments: ['build_hooks_logger']

@@ -6,6 +6,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\ContentEntityTypeInterface;
 
 /**
  * Class SettingsForm.
@@ -15,8 +16,6 @@ class SettingsForm extends ConfigFormBase {
   protected $entityTypeManager;
 
   protected $nodeTypes;
-
-  protected $entityTypes;
 
   /**
    * Class constructor.
@@ -113,15 +112,21 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('messages.log'),
     ];
 
+    $form['divider_logging'] = [
+      '#markup' => '<h2>' . $this->t('Changelog entities') . '</h2>' . '<hr/>',
+    ];
+
+    $form['logged_entity_types'] = [
+      '#type' => 'checkboxes',
+      '#options' => $this->getContentEntityTypes(),
+      '#default_value' => $config->get('logging.entity_types'),
+      '#title' => $this->t('Loggable entities'),
+      '#description' => $this->t('What entities should the system consider when logging "changes" for an environment?'),
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
-  }
 
   /**
    * {@inheritdoc}
@@ -135,13 +140,7 @@ class SettingsForm extends ConfigFormBase {
     $config->set('messages.show', $form_state->getValue('show'));
     $config->set('triggers.cron', $form_state->getValue('cron'));
     $config->set('triggers.menu', $form_state->getValue('menu'));
-
-    foreach ($this->getNodeTypes() as $nodeType) {
-      $config->set(
-        'triggers.node.' . $nodeType->id(),
-        $form_state->getValue('node_type_' . $nodeType->id())
-      );
-    }
+    $config->set('logging.entity_types', $form_state->getValue('logged_entity_types'));
 
     $config->save();
   }
@@ -159,15 +158,15 @@ class SettingsForm extends ConfigFormBase {
   }
 
   private function getContentEntityTypes() {
-    if ($this->nodeTypes) {
-      return $this->nodeTypes;
+    $content_entity_types = [];
+    $allEntityTypes = $this->entityTypeManager->getDefinitions();
+
+    foreach ($allEntityTypes as $entity_type_id => $entity_type) {
+      if ($entity_type instanceof ContentEntityTypeInterface) {
+        $content_entity_types[$entity_type_id] = $entity_type->getLabel();
+      }
     }
-
-    $this->nodeTypes = $this->entityTypeManager
-      ->getStorage('node_type')
-      ->loadMultiple();
-
-    return $this->nodeTypes;
+    return $content_entity_types;
   }
 
 }
