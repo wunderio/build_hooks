@@ -138,14 +138,6 @@ abstract class FrontendEnvironmentBase extends PluginBase implements FrontendEnv
       '#value' => $definition['provider'],
     ];
 
-    $form['label'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Title'),
-      '#maxlength' => 255,
-      '#default_value' => $this->label(),
-      '#required' => TRUE,
-    ];
-
     // Add plugin-specific settings for this frontend environment type.
     $form += $this->frontEndEnvironmentForm($form, $form_state);
     return $form;

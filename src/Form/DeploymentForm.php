@@ -183,10 +183,12 @@ class DeploymentForm extends FormBase {
         // If the call was successful, set the latest deployment time
         // for this environment.
         $this->buildHooksDeploylogger->setLastDeployTimeForEnvironment($frontend_environment);
+        $this->messenger()->addMessage($this->t('Deployment triggered!'));
       }
-    } catch (GuzzleException $e) {
+    }
+    catch (GuzzleException $e) {
       $this->messenger()
-        ->addError($this->t('Failed to execute build hook. Error message: <pre> @message </pre> .', ['@message' => $e->getMessage()]));
+        ->addError($this->t('Failed to execute build hook. Error message: <pre> @message </pre>', ['@message' => $e->getMessage()]));
     }
   }
 
