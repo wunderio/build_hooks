@@ -89,7 +89,6 @@ class CircleCiManager {
     return $buildHookDetails;
   }
 
-
   /**
    * Get the latest x builds from Cicle ci for an environment.
    *
@@ -98,11 +97,12 @@ class CircleCiManager {
    *
    * @throws \GuzzleHttp\Exception\GuzzleException
    */
-  public function retrieveLatestBuildsFromCicleciForEnvironment(FrontendEnvironment $environment, $limit = 1) {
-    $url = $this->buildCirlceCiApiRetrieveBuildsUrl($environment, $limit);
-    $options = ['headers' => [
-      'Accept'     => 'application/json',
-    ]
+  public function retrieveLatestBuildsFromCicleciForEnvironment(array $settings, $limit = 1) {
+    $url = $this->buildCirlceCiApiRetrieveBuildsUrl($settings, $limit);
+    $options = [
+      'headers' => [
+        'Accept' => 'application/json',
+      ],
     ];
     $response = $this->httpClient->request('GET', $url, $options);
     $payload = json_decode($response->getBody()->getContents(), TRUE);
@@ -119,11 +119,10 @@ class CircleCiManager {
    * @return string
    */
   private function buildCirlceCiApiRetrieveBuildsUrl(array $config, $limit) {
-    $circleCiConf = $this->configFactory->get('build_hooks.circleci');
-    $apiKey = $circleCiConf->get('circleciapikey');
+    $circleCiConf = $this->configFactory->get('build_hooks_circleci.circleCiConfig');
+    $apiKey = $circleCiConf->get('circleci_api_key');
     $branch = $config['branch'];
     return $this->buildCircleCiApiBasePathForEnvironment($config) . "tree/$branch?circle-token=$apiKey&limit=$limit";
   }
-
 
 }

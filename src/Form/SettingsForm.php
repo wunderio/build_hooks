@@ -16,6 +16,8 @@ class SettingsForm extends ConfigFormBase {
 
   protected $nodeTypes;
 
+  protected $entityTypes;
+
   /**
    * Class constructor.
    *
@@ -58,19 +60,6 @@ class SettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('build_hooks.settings');
-    $circleCiConfig = $this->config('build_hooks.circleci');
-
-    $form['project'] = [
-      '#markup' => '<p><b>Project:</b> ' . $circleCiConfig->get('project') . '</p>' . '<hr/>',
-    ];
-
-    $form['prodbranch'] = [
-      '#markup' => '<p><b>Production branch:</b> ' . $circleCiConfig->get('prodbranch') . '</p>' . '<hr/>',
-    ];
-
-    $form['previewbranch'] = [
-      '#markup' => '<p><b>Preview branch:</b> ' . $circleCiConfig->get('previewbranch') . '</p>' . '<hr/>',
-    ];
 
     $form['divider_line'] = [
       '#markup' => '<h2>' . $this->t('Triggers') . '</h2>' . '<hr/>',
@@ -158,6 +147,18 @@ class SettingsForm extends ConfigFormBase {
   }
 
   private function getNodeTypes() {
+    if ($this->nodeTypes) {
+      return $this->nodeTypes;
+    }
+
+    $this->nodeTypes = $this->entityTypeManager
+      ->getStorage('node_type')
+      ->loadMultiple();
+
+    return $this->nodeTypes;
+  }
+
+  private function getContentEntityTypes() {
     if ($this->nodeTypes) {
       return $this->nodeTypes;
     }

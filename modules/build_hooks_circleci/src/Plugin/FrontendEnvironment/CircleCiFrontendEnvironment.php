@@ -6,6 +6,8 @@ use Drupal\build_hooks\Annotation\FrontendEnvironment;
 use Drupal\build_hooks\Plugin\FrontendEnvironmentBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\build_hooks_circleci\CircleCiManager;
+use Drupal\Core\Messenger\MessengerTrait;
+use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 
@@ -19,6 +21,8 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
  * )
  */
 class CircleCiFrontendEnvironment extends FrontendEnvironmentBase implements ContainerFactoryPluginInterface {
+
+  use MessengerTrait;
 
   /**
    * Drupal\giroola_checkfront\CheckfrontManager definition.
@@ -99,6 +103,114 @@ class CircleCiFrontendEnvironment extends FrontendEnvironmentBase implements Con
    */
   public function getBuildHookDetails() {
     return $this->circleCiManager->getBuildHookDetailsForPluginConfiguration($this->getConfiguration());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAdditionalDeployFormElements() {
+
+    $form = [];
+
+    $form['latestCircleCiDeployments'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Recent deployments'),
+      '#description' => $this->t('Here you can see the details for the latest deployments for this environment.'),
+      '#open' => TRUE,
+    ];
+
+    try {
+      $form['latestCircleCiDeployments']['table'] = $this->getLastCicleCiDeploymentsTable($this->getConfiguration());
+
+      $form['latestCircleCiDeployments']['refresher'] = [
+        '#type' => 'button',
+        '#ajax' => [
+          'callback' => [CircleCiFrontendEnvironment::class, 'refreshDeploymentTable'],
+          'wrapper' => 'ajax-replace-table',
+          'effect' => 'fade',
+          'progress' => [
+            'type' => 'throbber',
+            'message' => $this->t('Refreshing deployment status...'),
+          ],
+        ],
+        '#value' => $this->t('Refresh'),
+      ];
+    }
+    catch (GuzzleException $e) {
+      $this->messenger()->addError('Unable to retrieve information about the last deployments for this environment. Check configuration.');
+    }
+
+    return $form;
+  }
+
+  /**
+   * Gets information about the latest circle ci deployments for this environment.
+   *
+   * @param array $settings
+   *   The plugin settings array.
+   *
+   * @return array
+   *   Renderable array.
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
+   */
+  private function getLastCicleCiDeploymentsTable(array $settings) {
+    $circleCiData = $this->circleCiManager->retrieveLatestBuildsFromCicleciForEnvironment($settings, 8);
+    $element = [
+      '#type' => 'table',
+      '#attributes' => ['id' => 'ajax-replace-table'],
+      '#header' => [
+        $this->t('Status'),
+        $this->t('Started at'),
+        $this->t('Finished at'),
+      ],
+    ];
+    if (!empty($circleCiData)) {
+      foreach ($circleCiData as $circleCiDeployment) {
+
+        // HACK: We do not want to show the "validate" jobs:
+        if ($circleCiDeployment['build_parameters']['CIRCLE_JOB'] == 'validate') {
+          continue;
+        }
+
+        $element[$circleCiDeployment['build_num']]['status'] = [
+          '#type' => 'item',
+          '#markup' => '<strong>' . $circleCiDeployment['status'] . '</strong>',
+        ];
+
+        $started_time = $circleCiDeployment['start_time'] ? format_date(\DateTime::createFromFormat('Y-m-d\TH:i:s+', $circleCiDeployment['start_time'])
+          ->getTimestamp(), 'long') : '';
+
+        $element[$circleCiDeployment['build_num']]['started_at'] = [
+          '#type' => 'item',
+          '#markup' => $started_time,
+        ];
+
+        $stopped_time = $circleCiDeployment['stop_time'] ? format_date(\DateTime::createFromFormat('Y-m-d\TH:i:s+', $circleCiDeployment['stop_time'])
+          ->getTimestamp(), 'long') : '';
+
+        $element[$circleCiDeployment['build_num']]['finished_at'] = [
+          '#type' => 'item',
+          '#markup' => $stopped_time,
+        ];
+      }
+    }
+    return $element;
+  }
+
+  /**
+   * Ajax callback to rebuild the latest deployments table.
+   *
+   * @param array $form
+   *   The form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state of the form.
+   *
+   * @return array
+   *   The form array to add back to the form.
+   */
+  public static function refreshDeploymentTable(array $form, FormStateInterface $form_state) {
+    return $form['latestCircleCiDeployments']['table'];
   }
 
 }

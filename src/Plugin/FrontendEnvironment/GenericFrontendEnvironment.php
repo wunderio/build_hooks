@@ -59,4 +59,12 @@ class GenericFrontendEnvironment extends FrontendEnvironmentBase {
     return $buildHookDetails;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getAdditionalDeployFormElements() {
+    // No additional form elements for the deploy form for this type of plugin.
+    return [];
+  }
+
 }

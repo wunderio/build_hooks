@@ -19,4 +19,12 @@ interface FrontendEnvironmentInterface extends ConfigurablePluginInterface, Plug
    */
   public function getBuildHookDetails();
 
+  /**
+   * Allows the plugin to add elements to the deployment form.
+   *
+   * @return array
+   *   A form array to add to the deployment form.
+   */
+  public function getAdditionalDeployFormElements();
+
 }

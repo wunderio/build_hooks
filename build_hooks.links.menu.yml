@@ -7,9 +7,9 @@ build_hooks.hook_form:
 
 # Frontend environment menu items definition
 entity.frontend_environment.collection:
-  title: 'Frontend environment'
+  title: 'Frontend environments'
   route_name: entity.frontend_environment.collection
-  description: 'List Frontend environment (bundles)'
+  description: 'Manage list of frontend environments.'
   parent: system.admin_structure
   weight: 99
 

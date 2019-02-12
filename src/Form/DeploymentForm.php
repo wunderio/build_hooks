@@ -14,6 +14,7 @@ use Drupal\build_hooks\DeployLogger;
 use Drupal\views\Views;
 use Drupal\Core\Datetime\DateFormatter;
 use GuzzleHttp\Exception\GuzzleException;
+use Drupal\Component\Utility\NestedArray;
 
 /**
  * Class DeploymentForm.
@@ -84,15 +85,17 @@ class DeploymentForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, FrontendEnvironment $frontend_environment = NULL) {
 
+    // When was the last deployment?
     $last_deployment_timestamp = $this->buildHooksDeploylogger->getLastDeployTimeForEnvironment($frontend_environment);
+    // Show it to humans:
     $last_deployment_timestamp_formatted = $this->dateFormatter->format($last_deployment_timestamp, 'long');
-    $environmentName = $frontend_environment->label();
 
+    // TODO: render this with some theme hook instead of html tags.
     $form['display'] = [
       '#markup' => '<h2>' . $this->t('@envName Environment', ['@envName' => $frontend_environment->label()]) . '</h2>',
     ];
 
-    $form['environment link'] = [
+    $form['environment_link'] = [
       '#markup' => $this->t('Frontend @environmentName site url: @link', [
         '@link' => Link::fromTextAndUrl($frontend_environment->getUrl(), Url::fromUri($frontend_environment->getUrl(), ['attributes' => ['target' => '_blank']]))
           ->toString(),
@@ -100,27 +103,26 @@ class DeploymentForm extends FormBase {
       ]),
     ];
 
-    $form['lastdeployment'] = [
+    $form['last_deployment'] = [
       '#markup' => '<p>' . $this->t('Last deployment triggered on: <strong>@date</strong>', ['@date' => $last_deployment_timestamp_formatted]) . '</p>',
     ];
 
     $form['changelog'] = [
       '#type' => 'details',
       '#title' => $this->t('Changelog'),
-      '#description' => $this->t("This is a summary of the changes since the previous deployment to the <strong>%branch</strong> environment:", ['%branch' => $environmentName]) . '</p>',
+      '#description' => $this->t("This is a summary of the changes since the previous deployment to the <strong>%branch</strong> environment:", ['%branch' => $frontend_environment->label()]) . '</p>',
       '#open' => TRUE,
     ];
 
+    // Have we logged any changes since last deployment?
     if ($this->buildHooksDeploylogger->getNumberOfItemsSinceLastDeploymentForEnvironment($frontend_environment) > 0) {
-
       try {
         $form['changelog']['log'] = [
           '#markup' => $this->getChangelogView($last_deployment_timestamp),
         ];
       }
       catch (\Exception $e) {
-        $this->messenger()
-          ->addWarning($this->t('Could not render the view with the changelog. Check configuration.'));
+        $this->messenger()->addWarning($this->t('Could not render the view with the changelog. Check configuration.'));
       }
 
     }
@@ -128,34 +130,24 @@ class DeploymentForm extends FormBase {
       $form['changelog']['#description'] = '<p>' . $this->t('No changes recorded since the last deployment for this environment. If needed you can still trigger a deployment using this page.') . '</p>';
     }
 
-    $form['latestCircleCiDeployments'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Recent deployments'),
-      '#description' => $this->t('Here you can see the details for the latest deployments for this environment.'),
-      '#open' => TRUE,
-    ];
-
-    //$form['latestCircleCiDeployments']['table'] = $this->getLastCicleCiDeploymentsTable($frontend_environment);
-
-    //    $form['latestCircleCiDeployments']['refresher'] = [
-    //      '#type' => 'button',
-    //      '#ajax' => [
-    //        'callback' => '::refreshDeploymentTable',
-    //        'wrapper' => 'ajax-replace-table',
-    //        'effect' => 'fade',
-    //        'progress' => [
-    //          'type' => 'throbber',
-    //          'message' => $this->t('Refreshing deployment status...'),
-    //        ],
-    //      ],
-    //      '#value' => $this->t('Refresh'),
-    //    ];
-    //
-
+    // Add the entity to the form:
     $form['frontend_environment'] = [
       '#type' => 'value',
       '#value' => $frontend_environment,
     ];
+
+    // Plugins have a possibility to return additional elements for this form:
+    /** @var \Drupal\build_hooks\Plugin\FrontendEnvironmentBase $plugin */
+    $plugin = $frontend_environment->getPlugin();
+    $additionalFormElements = $plugin->getAdditionalDeployFormElements();
+
+    // If they do, merge their form elements into the form:
+    if (!empty($additionalFormElements)) {
+      $form = NestedArray::mergeDeep(
+        $form,
+        $additionalFormElements);
+    }
+
 
     $form['submit'] = [
       '#type' => 'submit',
@@ -209,54 +201,5 @@ class DeploymentForm extends FormBase {
     $arg = implode('+', $wids);
     return $this->renderer->render($thisView->buildRenderable('embed_1', [$arg]));
   }
-
-  private function getLastCicleCiDeploymentsTable(FrontendEnvironment $environment) {
-    $circleCiData = $this->circleCiManager->retrieveLatestBuildsFromCicleciForEnvironment($environment, 8);
-    $element = [
-      '#type' => 'table',
-      '#attributes' => ['id' => 'ajax-replace-table'],
-      '#header' => [
-        $this->t('Started at'),
-        $this->t('Finished at'),
-        $this->t('Status'),
-      ],
-    ];
-    if (!empty($circleCiData)) {
-      foreach ($circleCiData as $circleCiDeployment) {
-
-        // HACK: We do not want to show the "validate" jobs:
-        if ($circleCiDeployment['build_parameters']['CIRCLE_JOB'] == 'validate') {
-          continue;
-        }
-
-        $started_time = $circleCiDeployment['start_time'] ? format_date(\DateTime::createFromFormat('Y-m-d\TH:i:s+', $circleCiDeployment['start_time'])
-          ->getTimestamp(), 'long') : '';
-
-        $element[$circleCiDeployment['build_num']]['started_at'] = [
-          '#type' => 'item',
-          '#markup' => $started_time,
-        ];
-
-        $stopped_time = $circleCiDeployment['stop_time'] ? format_date(\DateTime::createFromFormat('Y-m-d\TH:i:s+', $circleCiDeployment['stop_time'])
-          ->getTimestamp(), 'long') : '';
-
-        $element[$circleCiDeployment['build_num']]['finished_at'] = [
-          '#type' => 'item',
-          '#markup' => $stopped_time,
-        ];
-
-        $element[$circleCiDeployment['build_num']]['status'] = [
-          '#type' => 'item',
-          '#markup' => '<strong>' . $circleCiDeployment['status'] . '</strong>',
-        ];
-      }
-    }
-    return $element;
-  }
-
-  public function refreshDeploymentTable($form, FormStateInterface $form_state) {
-    return $form['latestCircleCiDeployments']['table'];
-  }
-
 
 }
