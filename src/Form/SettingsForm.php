@@ -157,6 +157,12 @@ class SettingsForm extends ConfigFormBase {
     return $this->nodeTypes;
   }
 
+  /**
+   * Gets a list of all the defined content entities in the system.
+   *
+   * @return array
+   *   An array of content entities definitions.
+   */
   private function getContentEntityTypes() {
     $content_entity_types = [];
     $allEntityTypes = $this->entityTypeManager->getDefinitions();
