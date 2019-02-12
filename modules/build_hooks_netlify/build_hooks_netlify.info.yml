@@ -1,7 +1,0 @@
-name: 'Build Hooks'
-type: module
-description: 'Triggers a build hook on any service provider that supports build hooks.'
-core: 8.x
-package: 'Build hooks'
-dependencies:
-  - build_hooks

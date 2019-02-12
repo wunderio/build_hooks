@@ -14,7 +14,8 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
  *
  * @FrontendEnvironment(
  *  id = "circleci",
- *  label = "Circle CI"
+ *  label = "Circle CI",
+ *  description = "An environment connected to Circle CI"
  * )
  */
 class CircleCiFrontendEnvironment extends FrontendEnvironmentBase implements ContainerFactoryPluginInterface {

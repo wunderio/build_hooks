@@ -68,7 +68,7 @@ class FrontendEnvironmentLibraryController extends ControllerBase {
     // them manually as part of this listing.
     $headers = [
       ['data' => $this->t('Type')],
-      ['data' => $this->t('Module')],
+      ['data' => $this->t('Description')],
       ['data' => $this->t('Operations')],
     ];
 
@@ -84,7 +84,7 @@ class FrontendEnvironmentLibraryController extends ControllerBase {
           'label' => $plugin_definition['label'],
         ],
       ];
-      $row['provider']['data'] = $plugin_definition['provider'];
+      $row['description']['data'] = $plugin_definition['description'];
       $links['add'] = [
         'title' => $this->t('Add new environment'),
         'url' => Url::fromRoute('build_hooks.admin_add', ['plugin_id' => $plugin_id]),

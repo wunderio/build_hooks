@@ -115,7 +115,7 @@ class FrontendEnvironment extends ConfigEntityBase implements FrontendEnvironmen
   }
 
   /**
-   * Encapsulates the creation of the frontend environment's LazyPluginCollection.
+   * Encapsulates creation of the frontend environment's LazyPluginCollection.
    *
    * @return \Drupal\Component\Plugin\LazyPluginCollection
    *   The frontend environment's plugin collection.
