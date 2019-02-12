@@ -46,7 +46,6 @@ use Drupal\build_hooks\FrontendEnvironmentPluginCollection;
  *     "plugin",
  *     "settings",
  *     "url",
- *     "branch"
  *   },
  * )
  */
@@ -81,13 +80,6 @@ class FrontendEnvironment extends ConfigEntityBase implements FrontendEnvironmen
   protected $label;
 
   /**
-   * The git branch name of the environment.
-   *
-   * @var string
-   */
-  protected $branch;
-
-  /**
    * The url of the environment.
    *
    * @var string
@@ -107,13 +99,6 @@ class FrontendEnvironment extends ConfigEntityBase implements FrontendEnvironmen
    * @var array
    */
   protected $settings = [];
-
-  /**
-   * @return string
-   */
-  public function getBranch() {
-    return $this->branch;
-  }
 
   /**
    * @return string

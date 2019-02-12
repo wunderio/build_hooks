@@ -1,9 +1,13 @@
 <?php
 
 namespace Drupal\build_hooks_circleci;
+
+use Drupal\build_hooks_circle_ci\Plugin\FrontendEnvironment\NetlifyFrontendEnvironment;
+use Drupal\build_hooks_circleci\Plugin\FrontendEnvironment\CircleCiFrontendEnvironment;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use GuzzleHttp\ClientInterface;
 use Drupal\build_hooks\Entity\FrontendEnvironment;
+use Drupal\build_hooks\BuildHookDetails;
 
 /**
  * Class CircleCiManager.
@@ -27,7 +31,6 @@ class CircleCiManager {
    */
   protected $httpClient;
 
-
   /**
    * Constructs a new CircleCiManager object.
    */
@@ -43,10 +46,10 @@ class CircleCiManager {
    *
    * @return string
    */
-  private function buildCirlceCiApiBuildUrl(FrontendEnvironment $environment) {
+  private function buildCirlceCiApiBuildUrl(array $config) {
     $circleCiConf = $this->configFactory->get('build_hooks.circleci');
     $apiKey = $circleCiConf->get('circleciapikey');
-    return $this->buildCircleciApiBasePathForEnvironment($environment) . "build?circle-token=$apiKey";
+    return $this->buildCircleciApiBasePathForEnvironment($config) . "build?circle-token=$apiKey";
   }
 
   /**
@@ -89,31 +92,54 @@ class CircleCiManager {
   /**
    *  Build the url to retrieve latest builds from circle ci for an environment.
    *
-   * @param \Drupal\build_hooks\Entity\FrontendEnvironment $environment
+   * @param array $config
+   *   The configuration array from the plugin.
    * @param int $limit
    *
    * @return string
    */
-  private function buildCirlceCiApiRetrieveBuildsUrl(FrontendEnvironment $environment, $limit) {
+  private function buildCirlceCiApiRetrieveBuildsUrl(array $config, $limit) {
     $circleCiConf = $this->configFactory->get('build_hooks.circleci');
     $apiKey = $circleCiConf->get('circleciapikey');
-    $branch = $environment->getBranch();
-    return $this->buildCircleciApiBasePathForEnvironment($environment) . "tree/$branch?circle-token=$apiKey&limit=$limit";
+    $branch = $config['branch'];
+    return $this->buildCircleCiApiBasePathForEnvironment($config) . "tree/$branch?circle-token=$apiKey&limit=$limit";
   }
 
   /**
-   * Build the url to call circle ci depending on the environment.
+   * Build a url to call circle ci depending on the frontend environment config.
    *
-   * @param \Drupal\build_hooks\Entity\FrontendEnvironment $environment
+   * @param array $config
+   *   The configuration array from the plugin.
    *
    * @return string
+   *   The url to call.
    */
-  private function buildCircleciApiBasePathForEnvironment(FrontendEnvironment $environment) {
+  private function buildCircleCiApiBasePathForEnvironment(array $config) {
     $basePath = self::CIRCLECI_BASE_PATH;
     $platform = self::CIRCLECI_HOSTED_PLATFORM;
-    $project = $environment->getProject();
+    $project = $config['project'];
     return "$basePath/project/$platform/$project/";
   }
 
+  /**
+   * Returns the build hooks details based on plugin configuration.
+   *
+   * @param array $config
+   *   The plugin configuration array.
+   *
+   * @return \Drupal\build_hooks\BuildHookDetails
+   *   Build hooks detail object with info about the request to make.
+   */
+  public function getBuildHookDetailsForPluginConfiguration(array $config) {
+    $buildHookDetails = new BuildHookDetails();
+    $buildHookDetails->setUrl($this->buildCircleCiApiBasePathForEnvironment($config));
+    $buildHookDetails->setMethod('POST');
+    $buildHookDetails->setBody([
+      'json' => [
+        'branch' => $config['branch'],
+      ],
+    ]);
+    return $buildHookDetails;
+  }
 
 }

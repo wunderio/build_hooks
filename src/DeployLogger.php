@@ -12,8 +12,8 @@ use Drupal\build_hooks\Entity\FrontendEnvironment;
  */
 class DeployLogger {
 
-  CONST LOGGABLE_ENTITY_TYPES = ['node','taxonomy_term','author','media','menu_link_content'];
-  CONST LOGGER_CHANNEL_NAME = 'build_hooks_logger';
+  const LOGGABLE_ENTITY_TYPES = ['node', 'taxonomy_term', 'author', 'media', 'menu_link_content'];
+  const LOGGER_CHANNEL_NAME = 'build_hooks_logger';
 
   /**
    * Logger channel.
@@ -99,7 +99,7 @@ class DeployLogger {
    * @param \Drupal\build_hooks\Entity\FrontendEnvironment $environment
    */
   public function setLastDeployTimeForEnvironment(FrontendEnvironment $environment) {
-    $this->state->set('lastDeployForEnv' . $environment->getBranch(), time());
+    $this->state->set('lastDeployForEnv' . $environment->id(), time());
   }
 
   /**
@@ -110,7 +110,7 @@ class DeployLogger {
    * @return mixed
    */
   public function getLastDeployTimeForEnvironment(FrontendEnvironment $environment) {
-    return $this->state->get('lastDeployForEnv' . $environment->getBranch(), 0);
+    return $this->state->get('lastDeployForEnv' . $environment->id(), 0);
   }
 
   /**
@@ -136,13 +136,6 @@ class DeployLogger {
     return $wids;
   }
 
-  /**
-   * Returns the number of changes since the last deployment for a specific branch
-   *
-   * @param $branch
-   *
-   * @return int
-   */
   public function getNumberOfItemsSinceLastDeploymentForEnvironment(FrontendEnvironment $environment) {
     $timestamp = $this->getLastDeployTimeForEnvironment($environment);
     $elements = $this->getLogItemsSinceTimestamp($timestamp);

@@ -74,15 +74,6 @@ class FrontendEnvironmentForm extends EntityForm {
       '#required' => TRUE,
     ];
 
-    $form['branch'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Git branch'),
-      '#maxlength' => 255,
-      '#default_value' => $entity->getBranch(),
-      '#description' => $this->t("Git branch to deploy to for this environment."),
-      '#required' => TRUE,
-    ];
-
     $form['weight'] = [
       '#type' => 'number',
       '#title' => $this->t('Weight'),

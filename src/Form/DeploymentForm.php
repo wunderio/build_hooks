@@ -2,7 +2,6 @@
 
 namespace Drupal\build_hooks\Form;
 
-use Drupal\build_hooks\CircleCiManager;
 use Drupal\build_hooks\Entity\FrontendEnvironment;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -14,6 +13,7 @@ use Drupal\build_hooks\TriggerInterface;
 use Drupal\build_hooks\DeployLogger;
 use Drupal\views\Views;
 use Drupal\Core\Datetime\DateFormatter;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Class DeploymentForm.
@@ -89,19 +89,19 @@ class DeploymentForm extends FormBase {
     $environmentName = $frontend_environment->label();
 
     $form['display'] = [
-      '#markup' => '<h2>' . t('@envName Environment', ['@envName' => $frontend_environment->label()]) . '</h2>',
+      '#markup' => '<h2>' . $this->t('@envName Environment', ['@envName' => $frontend_environment->label()]) . '</h2>',
     ];
 
     $form['environment link'] = [
-      '#markup' => t('Frontend @environmentName site url: @link', [
+      '#markup' => $this->t('Frontend @environmentName site url: @link', [
         '@link' => Link::fromTextAndUrl($frontend_environment->getUrl(), Url::fromUri($frontend_environment->getUrl(), ['attributes' => ['target' => '_blank']]))
           ->toString(),
-        '@environmentName' => $frontend_environment->label()
+        '@environmentName' => $frontend_environment->label(),
       ]),
     ];
 
     $form['lastdeployment'] = [
-      '#markup' => '<p>' . t('Last deployment triggered on: <strong>@date</strong>', ['@date' => $last_deployment_timestamp_formatted]) . '</p>',
+      '#markup' => '<p>' . $this->t('Last deployment triggered on: <strong>@date</strong>', ['@date' => $last_deployment_timestamp_formatted]) . '</p>',
     ];
 
     $form['changelog'] = [
@@ -113,9 +113,15 @@ class DeploymentForm extends FormBase {
 
     if ($this->buildHooksDeploylogger->getNumberOfItemsSinceLastDeploymentForEnvironment($frontend_environment) > 0) {
 
-      $form['changelog']['log'] = [
-        '#markup' => $this->getChangelogView($last_deployment_timestamp),
-      ];
+      try {
+        $form['changelog']['log'] = [
+          '#markup' => $this->getChangelogView($last_deployment_timestamp),
+        ];
+      }
+      catch (\Exception $e) {
+        $this->messenger()
+          ->addWarning($this->t('Could not render the view with the changelog. Check configuration.'));
+      }
 
     }
     else {
@@ -129,32 +135,32 @@ class DeploymentForm extends FormBase {
       '#open' => TRUE,
     ];
 
-
     //$form['latestCircleCiDeployments']['table'] = $this->getLastCicleCiDeploymentsTable($frontend_environment);
 
-//    $form['latestCircleCiDeployments']['refresher'] = [
-//      '#type' => 'button',
-//      '#ajax' => [
-//        'callback' => '::refreshDeploymentTable',
-//        'wrapper' => 'ajax-replace-table',
-//        'effect' => 'fade',
-//        'progress' => [
-//          'type' => 'throbber',
-//          'message' => t('Refreshing deployment status...'),
-//        ],
-//      ],
-//      '#value' => $this->t('Refresh'),
-//    ];
-//
-//    $form['environment_id'] = [
-//      '#type' => 'value',
-//      '#value' => $frontend_environment->id(),
-//    ];
-//
-//    $form['submit'] = [
-//      '#type' => 'submit',
-//      '#value' => $this->t('Start a new deployment to the @environment environment', ['@environment' => $frontend_environment->label()]),
-//    ];
+    //    $form['latestCircleCiDeployments']['refresher'] = [
+    //      '#type' => 'button',
+    //      '#ajax' => [
+    //        'callback' => '::refreshDeploymentTable',
+    //        'wrapper' => 'ajax-replace-table',
+    //        'effect' => 'fade',
+    //        'progress' => [
+    //          'type' => 'throbber',
+    //          'message' => $this->t('Refreshing deployment status...'),
+    //        ],
+    //      ],
+    //      '#value' => $this->t('Refresh'),
+    //    ];
+    //
+
+    $form['frontend_environment'] = [
+      '#type' => 'value',
+      '#value' => $frontend_environment,
+    ];
+
+    $form['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Start a new deployment to the @environment environment', ['@environment' => $frontend_environment->label()]),
+    ];
 
     return $form;
   }
@@ -162,35 +168,45 @@ class DeploymentForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Get the environment id:
-    $environment_id = $form_state->getValue('environment_id');
-    // Trigger the deployment!
-    $this->buildHooksTrigger->execute($environment_id);
+    // Get the environment entity:
+    /** @var \Drupal\build_hooks\Entity\FrontendEnvironment $frontend_environment */
+    $frontend_environment = $form_state->getValue('frontend_environment');
+
+    /** @var \Drupal\build_hooks\Plugin\FrontendEnvironmentBase $plugin */
+    $plugin = $frontend_environment->getPlugin();
+    $buildHookDetails = $plugin->getBuildHookDetails();
+
+    try {
+      $response_code = $this->buildHooksTrigger->triggerBuildHook($buildHookDetails);
+      if ($response_code == 200) {
+        // If the call was successful, set the latest deployment time
+        // for this environment.
+        $this->buildHooksDeploylogger->setLastDeployTimeForEnvironment($frontend_environment);
+      }
+    } catch (GuzzleException $e) {
+      $this->messenger()
+        ->addError($this->t('Failed to execute build hook. Error message: <pre> @message </pre> .', ['@message' => $e->getMessage()]));
+    }
   }
 
   /**
-   * Renders a changelog of watchdog events since a specific timestamp
+   * Use the included view to render a the changelog.
    *
-   * @param $timestamp
+   * @param int $timestamp
+   *   Timestamp argument to get the changelog starting from.
    *
-   * @return mixed
+   * @return \Drupal\Component\Render\MarkupInterface|string
+   *   The rendered results.
+   *
+   * @throws \Exception
    */
   private function getChangelogView($timestamp) {
-    $thisView = Views::getView('build_hooks_edititing_log');
+    $thisView = Views::getView('build_hooks_editing_log');
     $wids = $this->buildHooksDeploylogger->getLogItemsSinceTimestamp($timestamp);
     $arg = implode('+', $wids);
-    // TODO: do not use drupal_render
     return $this->renderer->render($thisView->buildRenderable('embed_1', [$arg]));
   }
-
 
   private function getLastCicleCiDeploymentsTable(FrontendEnvironment $environment) {
     $circleCiData = $this->circleCiManager->retrieveLatestBuildsFromCicleciForEnvironment($environment, 8);
@@ -211,14 +227,16 @@ class DeploymentForm extends FormBase {
           continue;
         }
 
-        $started_time = $circleCiDeployment['start_time'] ? format_date(\DateTime::createFromFormat('Y-m-d\TH:i:s+', $circleCiDeployment['start_time'])->getTimestamp(), 'long') : '';
+        $started_time = $circleCiDeployment['start_time'] ? format_date(\DateTime::createFromFormat('Y-m-d\TH:i:s+', $circleCiDeployment['start_time'])
+          ->getTimestamp(), 'long') : '';
 
         $element[$circleCiDeployment['build_num']]['started_at'] = [
           '#type' => 'item',
           '#markup' => $started_time,
         ];
 
-        $stopped_time = $circleCiDeployment['stop_time'] ? format_date(\DateTime::createFromFormat('Y-m-d\TH:i:s+', $circleCiDeployment['stop_time'])->getTimestamp(), 'long') : '';
+        $stopped_time = $circleCiDeployment['stop_time'] ? format_date(\DateTime::createFromFormat('Y-m-d\TH:i:s+', $circleCiDeployment['stop_time'])
+          ->getTimestamp(), 'long') : '';
 
         $element[$circleCiDeployment['build_num']]['finished_at'] = [
           '#type' => 'item',

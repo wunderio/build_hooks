@@ -23,6 +23,7 @@ build_hooks.deployment_form:
     _form: '\Drupal\build_hooks\Form\DeploymentForm'
     _title: 'Frontend environment deployment'
   options:
+    _admin_route: TRUE
     parameters:
       frontend_environment:
         type: entity:frontend_environment

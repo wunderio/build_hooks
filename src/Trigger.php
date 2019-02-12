@@ -11,6 +11,7 @@ use Drupal\Core\StringTranslation\TranslationManager;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\build_hooks\Entity\FrontendEnvironment;
+use Drupal\build_hooks\BuildHookDetails;
 
 /**
  * Class Trigger.
@@ -230,6 +231,26 @@ class Trigger implements TriggerInterface {
         $args
       )
     );
+  }
+
+  /**
+   * Triggers a build hook.
+   *
+   * @param \Drupal\build_hooks\BuildHookDetails $buildHookDetails
+   *   An object that holds the information about the call.
+   *
+   * @return int
+   *   The status code of the operation.
+   *
+   * @throws \GuzzleHttp\Exception\GuzzleException
+   */
+  public function triggerBuildHook(BuildHookDetails $buildHookDetails) {
+    $response = $this->httpClient->request(
+      $buildHookDetails->getMethod(),
+      $buildHookDetails->getUrl(),
+      $buildHookDetails->getBody()
+    );
+    return $response->getStatusCode();
   }
 
 }

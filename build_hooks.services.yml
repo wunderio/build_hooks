@@ -8,9 +8,6 @@ services:
   logger.channel.build_hooks_logger:
     parent: logger.channel_base
     arguments: ['build_hooks_logger']
-  build_hooks.circleci_manager:
-    class: Drupal\build_hooks\CircleCiManager
-    arguments: ['@config.factory', '@http_client']
   plugin.manager.frontend_environment:
     class: Drupal\build_hooks\Plugin\FrontendEnvironmentManager
     parent: default_plugin_manager
