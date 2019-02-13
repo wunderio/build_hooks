@@ -15,7 +15,7 @@ build_hooks.trigger_controller_execute:
     _title: 'Trigger Build'
     branch: 'master'
   requirements:
-    _permission: 'deploy to endpoints'
+    _permission: 'trigger deployments'
 
 build_hooks.deployment_form:
   path: '/admin/build_hooks/deployments/{frontend_environment}'
@@ -28,14 +28,14 @@ build_hooks.deployment_form:
       frontend_environment:
         type: entity:frontend_environment
   requirements:
-    _permission: 'deploy to endpoints'
+    _permission: 'trigger deployments'
 build_hooks.frontend_environment_plugin_types:
   path: '/admin/structure/frontend_environment_plugin_types'
   defaults:
     _controller: '\Drupal\build_hooks\Controller\FrontendEnvironmentLibraryController::listFrontendEnvironments'
     _title: 'Frontend environment types'
   requirements:
-    _permission: 'access administration pages'
+    _permission: 'manage frontend environments'
   options:
     _admin_route: TRUE
 build_hooks.admin_add:
@@ -45,4 +45,4 @@ build_hooks.admin_add:
     theme: null
     _title: 'Add new frontend environment'
   requirements:
-    _permission: 'access administration pages'
+    _permission: 'manage frontend environments'

@@ -189,7 +189,7 @@ class Trigger implements TriggerInterface {
    *
    */
   private function isValidUser() {
-    return $this->currentUser->hasPermission('deploy to endpoints');
+    return $this->currentUser->hasPermission('trigger deployments');
   }
 
   /**

@@ -11,7 +11,6 @@ use Drupal\Core\Plugin\DefaultPluginManager;
  */
 class FrontendEnvironmentManager extends DefaultPluginManager {
 
-
   /**
    * Constructs a new FrontendEnvironmentManager object.
    *

@@ -1,2 +1,4 @@
-deploy to endpoints:
-  title: 'Manage deployments to endpoints'
+trigger deployments:
+  title: 'Trigger deployments to endpoints.'
+manage frontend environments:
+  title: 'Create and manage frontend environments.'
