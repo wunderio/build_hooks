@@ -27,22 +27,13 @@ class FrontendEnvironmentPluginCollection extends DefaultSingleLazyPluginCollect
    *   The ID of the plugin instance.
    * @param array $configuration
    *   An array of configuration.
-   * @param string $block_id
+   * @param string $frontend_environment_id
    *   The unique ID of the frontend environment entity using this plugin.
    */
   public function __construct(PluginManagerInterface $manager, $instance_id, array $configuration, $frontend_environment_id) {
     parent::__construct($manager, $instance_id, $configuration);
 
     $this->frontendEnvironmentId = $frontend_environment_id;
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @return \Drupal\Core\Block\BlockPluginInterface
-   */
-  public function &get($instance_id) {
-    return parent::get($instance_id);
   }
 
   /**

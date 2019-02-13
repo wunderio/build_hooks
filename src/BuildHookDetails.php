@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Drupal\build_hooks;
 
 
@@ -9,8 +8,6 @@ namespace Drupal\build_hooks;
  *
  * Holds information to make the call to an external service for a build hook.
  */
-
-
 class BuildHookDetails {
 
   /**

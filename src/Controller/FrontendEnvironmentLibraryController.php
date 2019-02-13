@@ -28,16 +28,12 @@ class FrontendEnvironmentLibraryController extends ControllerBase {
   protected $localActionManager;
 
   /**
-   * Constructs a BlockLibraryController object.
+   * FrontendEnvironmentLibraryController constructor.
    *
-   * @param \Drupal\Core\Block\BlockManagerInterface $block_manager
-   *   The block manager.
-   * @param \Drupal\Core\Plugin\Context\LazyContextRepository $context_repository
-   *   The context repository.
-   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
-   *   The current route match.
+   * @param \Drupal\build_hooks\Plugin\FrontendEnvironmentManager $frontendEnvironmentManager
+   *   The frontend environment manager.
    * @param \Drupal\Core\Menu\LocalActionManagerInterface $local_action_manager
-   *   The local action manager.
+   *   The  local action manager.
    */
   public function __construct(FrontendEnvironmentManager $frontendEnvironmentManager, LocalActionManagerInterface $local_action_manager) {
     $this->frontendEnvironmentManager = $frontendEnvironmentManager;
@@ -57,15 +53,11 @@ class FrontendEnvironmentLibraryController extends ControllerBase {
   /**
    * Shows a list of frontend environments that can be added.
    *
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   The current request.
-   *
    * @return array
    *   A render array as expected by the renderer.
    */
   public function listFrontendEnvironments() {
-    // Since modals do not render any other part of the page, we need to render
-    // them manually as part of this listing.
+
     $headers = [
       ['data' => $this->t('Type')],
       ['data' => $this->t('Description')],
@@ -85,6 +77,7 @@ class FrontendEnvironmentLibraryController extends ControllerBase {
         ],
       ];
       $row['description']['data'] = $plugin_definition['description'];
+
       $links['add'] = [
         'title' => $this->t('Add new environment'),
         'url' => Url::fromRoute('build_hooks.admin_add', ['plugin_id' => $plugin_id]),

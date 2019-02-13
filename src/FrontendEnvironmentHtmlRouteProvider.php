@@ -4,13 +4,12 @@ namespace Drupal\build_hooks;
 
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Routing\AdminHtmlRouteProvider;
-use Symfony\Component\Routing\Route;
 
 /**
  * Provides routes for Frontend environment entities.
  *
- * @see Drupal\Core\Entity\Routing\AdminHtmlRouteProvider
- * @see Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider
+ * @see \Drupal\Core\Entity\Routing\AdminHtmlRouteProvider
+ * @see \Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider
  */
 class FrontendEnvironmentHtmlRouteProvider extends AdminHtmlRouteProvider {
 
@@ -19,9 +18,6 @@ class FrontendEnvironmentHtmlRouteProvider extends AdminHtmlRouteProvider {
    */
   public function getRoutes(EntityTypeInterface $entity_type) {
     $collection = parent::getRoutes($entity_type);
-
-    // Provide your custom entity routes here.
-
     return $collection;
   }
 

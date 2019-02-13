@@ -24,7 +24,7 @@ class FrontendEnvironmentListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /** @var  \Drupal\build_hooks\Entity\FrontendEnvironment $entity */
+    /** @var \Drupal\build_hooks\Entity\FrontendEnvironment $entity */
     $row['label'] = $entity->label();
     $row['plugin'] = $entity->getPlugin()->getPluginDefinition()['label'];
     $row['id'] = $entity->id();
