@@ -1,12 +1,17 @@
 langcode: en
 status: true
 dependencies:
+  enforced:
+    module:
+      - build_hooks
   module:
     - dblog
     - user
+_core:
+  default_config_hash: dTJtMY4Mm7I-HBpOcb0D7pGvA9Ca_uEpurQgErD2yrA
 id: build_hooks_editing_log
 label: 'Build hooks editing log'
-module: views
+module: build_hooks
 description: ''
 tag: ''
 base_table: watchdog
