@@ -46,16 +46,10 @@ class BuildHooksCircleCiConfigForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
+    // Save the api key to configuration:
     $this->config('build_hooks_circleci.circleCiConfig')
       ->set('circleci_api_key', $form_state->getValue('circleci_api_key'))
       ->save();

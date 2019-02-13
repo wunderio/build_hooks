@@ -110,6 +110,8 @@ class CircleCiFrontendEnvironment extends FrontendEnvironmentBase implements Con
    */
   public function getAdditionalDeployFormElements() {
 
+    // This plugin adds to the deployment form a fieldset displaying the
+    // latest deployments:
     $form = [];
 
     $form['latestCircleCiDeployments'] = [
@@ -144,7 +146,7 @@ class CircleCiFrontendEnvironment extends FrontendEnvironmentBase implements Con
   }
 
   /**
-   * Gets information about the latest circle ci deployments for this environment.
+   * Gets info about the latest circle ci deployments for this environment.
    *
    * @param array $settings
    *   The plugin settings array.
@@ -168,7 +170,7 @@ class CircleCiFrontendEnvironment extends FrontendEnvironmentBase implements Con
     if (!empty($circleCiData)) {
       foreach ($circleCiData as $circleCiDeployment) {
 
-        // HACK: We do not want to show the "validate" jobs:
+        // TODO : HACK: We do not want to show the "validate" jobs:
         if ($circleCiDeployment['build_parameters']['CIRCLE_JOB'] == 'validate') {
           continue;
         }
@@ -199,7 +201,7 @@ class CircleCiFrontendEnvironment extends FrontendEnvironmentBase implements Con
   }
 
   /**
-   * Ajax callback to rebuild the latest deployments table.
+   * Ajax form callback to rebuild the latest deployments table.
    *
    * @param array $form
    *   The form.
