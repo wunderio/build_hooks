@@ -94,7 +94,10 @@ abstract class FrontendEnvironmentBase extends PluginBase implements FrontendEnv
    * {@inheritdoc}
    */
   public function calculateDependencies() {
-    return [];
+    $dependencies = [];
+    $definition = $this->getPluginDefinition();
+    $dependencies['module'][] = $definition['provider'];
+    return $dependencies;
   }
 
   /**
