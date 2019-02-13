@@ -3,9 +3,9 @@
 namespace Drupal\build_hooks\Plugin\FrontendEnvironment;
 
 use Drupal\build_hooks\Annotation\FrontendEnvironment;
+use Drupal\build_hooks\BuildHookDetails;
 use Drupal\build_hooks\Plugin\FrontendEnvironmentBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\build_hooks\BuildHookDetails;
 
 /**
  * Provides a 'Generic' frontend environment type.

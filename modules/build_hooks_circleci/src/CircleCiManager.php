@@ -2,10 +2,9 @@
 
 namespace Drupal\build_hooks_circleci;
 
+use Drupal\build_hooks\BuildHookDetails;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use GuzzleHttp\ClientInterface;
-use Drupal\build_hooks\Entity\FrontendEnvironment;
-use Drupal\build_hooks\BuildHookDetails;
 
 /**
  * Class CircleCiManager.
@@ -90,10 +89,15 @@ class CircleCiManager {
   }
 
   /**
-   * Get the latest x builds from Cicle ci for an environment.
+   * Get the latest builds from Circle CI for and environment.
    *
-   * @param \Drupal\build_hooks\Entity\FrontendEnvironment $environment
+   * @param array $settings
+   *   The plugin settings array.
    * @param int $limit
+   *   Number of desired builds to retrieve.
+   *
+   * @return array
+   *   An array with info about the builds.
    *
    * @throws \GuzzleHttp\Exception\GuzzleException
    */
@@ -110,13 +114,15 @@ class CircleCiManager {
   }
 
   /**
-   *  Build the url to retrieve latest builds from circle ci for an environment.
+   * Build the url to retrieve latest builds from circle ci for an environment.
    *
    * @param array $config
    *   The configuration array from the plugin.
    * @param int $limit
+   *   Number of desired builds to retrieve.
    *
    * @return string
+   *   The url to call to get the builds.
    */
   private function buildCirlceCiApiRetrieveBuildsUrl(array $config, $limit) {
     $circleCiConf = $this->configFactory->get('build_hooks_circleci.circleCiConfig');

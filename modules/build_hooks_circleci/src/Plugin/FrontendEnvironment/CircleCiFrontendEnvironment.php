@@ -4,12 +4,12 @@ namespace Drupal\build_hooks_circleci\Plugin\FrontendEnvironment;
 
 use Drupal\build_hooks\Annotation\FrontendEnvironment;
 use Drupal\build_hooks\Plugin\FrontendEnvironmentBase;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\build_hooks_circleci\CircleCiManager;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerTrait;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 
 /**
  * Provides a 'CircleCI' frontend environment type.

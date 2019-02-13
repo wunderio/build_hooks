@@ -2,12 +2,12 @@
 
 namespace Drupal\build_hooks;
 
-use Drupal\Core\Logger\LoggerChannel;
-use Drupal\Core\State\StateInterface;
-use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Database\Connection;
 use Drupal\build_hooks\Entity\FrontendEnvironment;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Logger\LoggerChannel;
+use Drupal\Core\State\StateInterface;
 
 /**
  * Class DeployLogger.

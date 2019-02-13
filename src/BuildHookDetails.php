@@ -2,7 +2,6 @@
 
 namespace Drupal\build_hooks;
 
-
 /**
  * Class BuildHookDetails.
  *

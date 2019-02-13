@@ -2,9 +2,9 @@
 
 namespace Drupal\build_hooks\Entity;
 
+use Drupal\build_hooks\FrontendEnvironmentPluginCollection;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
-use Drupal\build_hooks\FrontendEnvironmentPluginCollection;
 
 /**
  * Defines the Frontend environment entity.

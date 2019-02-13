@@ -2,16 +2,15 @@
 
 namespace Drupal\build_hooks;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
-use GuzzleHttp\Exception\GuzzleException;
-use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\Core\Messenger\MessengerInterface;
-use GuzzleHttp\ClientInterface;
-use Drupal\Core\StringTranslation\TranslationManager;
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\build_hooks\Entity\FrontendEnvironment;
-use Drupal\build_hooks\BuildHookDetails;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslationManager;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Class Trigger.
