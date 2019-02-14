@@ -73,6 +73,7 @@ abstract class FrontendEnvironmentBase extends PluginBase implements FrontendEnv
       'id' => $this->getPluginId(),
       'label' => '',
       'provider' => $this->pluginDefinition['provider'],
+      'deployment_strategy' => 'manual',
     ];
   }
 
@@ -142,6 +143,20 @@ abstract class FrontendEnvironmentBase extends PluginBase implements FrontendEnv
       '#value' => $definition['provider'],
     ];
 
+    $deployment_strategy_values = [
+      'manual' => $this->t('<strong>Manually only</strong>: deploys are triggered only by submitting the deployment form.'),
+      'cron' => $this->t('<strong>On cron</strong>: deploy this environment at each cron run.'),
+      'entitysave' => $this->t('<strong>When content is updated</strong>: deploy this environment when one of the logged entities is added, modified or deleted.'),
+    ];
+
+    $form['deployment_strategy'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Deployment strategy.'),
+      '#default_value' => $this->getConfiguration()['deployment_strategy'],
+      '#options' => $deployment_strategy_values,
+      '#description' => $this->t('You can choose here how the deployments should be triggered.')
+    ];
+
     // Add plugin-specific settings for this frontend environment type.
     $form += $this->frontEndEnvironmentForm($form, $form_state);
     return $form;
@@ -184,6 +199,7 @@ abstract class FrontendEnvironmentBase extends PluginBase implements FrontendEnv
     if (!$form_state->getErrors()) {
       $this->configuration['label'] = $form_state->getValue('label');
       $this->configuration['provider'] = $form_state->getValue('provider');
+      $this->configuration['deployment_strategy'] = $form_state->getValue('deployment_strategy');
       $this->frontEndEnvironmentSubmit($form, $form_state);
     }
   }
